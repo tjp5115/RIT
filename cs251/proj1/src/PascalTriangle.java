@@ -2,32 +2,53 @@
  * Created by Crystal on 9/5/2015.
  */
 public class PascalTriangle {
-    private int n;
-    private int a;
-    private int b;
-    private int s;
-    private TriPiece[][] tri;
+    private int a,b,s;
+    private TriRow[] triangle;
+    private MonitorTri monitor;
     public PascalTriangle(String n,String a,String b,String s){
         this(Integer.parseInt(n), Integer.parseInt(a), Integer.parseInt(b), Integer.parseInt(s));
     }
-    public PascalTriangle(int n,int a,int b,int s){
-        this.n = n;
+    public PascalTriangle(int size,int a,int b,int s){
         this.a = a;
         this.b = b;
         this.s = s;
-        tri = new TriPiece[n][];
-        for(int i = 0;i < n;++i){
-            tri[i] = new TriPiece[i+1];
+        triangle = new TriRow[size];
+        monitor = new MonitorTri(this,size);
+        for(int i = 0;i<size;++i){
+            triangle[i] = new TriRow(i,monitor);
         }
-
     }
-    public String toString(){
-        for(int r=0;r<n;++r){
-            for(int c=0;c < (r+1);++c){
-                System.out.print(tri[r][c].getValue());
-            }
-            System.out.println();
+    public void startReverse(){
+        for(int i = monitor.rows()-1;i>=0;--i) {
+            triangle[i].start();
         }
-        return "";
+    }
+    public TriRow getRow(int r){
+        return triangle[r];
+    }
+    public TriPiece getPiece(int r,int c){
+        return triangle[r].getPiece(c);
+    }
+    public void setPiece(int r, int c, int value){
+        triangle[r].setPiece(c,value);
+    }
+    public int getS(){
+        return s;
+    }
+    public int getA(){
+        return a;
+    }
+    public int getB(){
+        return b;
+    }
+    public boolean pieceHasValue(int r, int c){
+        return triangle[r].getPiece(c).isValueSet();
+    }
+    public int getSize(){
+        return monitor.rows();
+    }
+
+    public boolean isRowComplete(int r){
+        return triangle[r].isComplete();
     }
 }

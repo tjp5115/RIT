@@ -8,6 +8,8 @@ public class GenPasTri {
         }
 
         PascalTriangle pasTri = new PascalTriangle(args[0], args[1], args[2], args[3]);
-
+        PasTriOutput out = new PasTriOutput(pasTri);
+        out.start();
+        pasTri.startReverse();
     }
 }
