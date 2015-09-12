@@ -1,10 +1,10 @@
 /**
  * Created by Crystal on 9/5/2015.
  */
-public class PascalTriangle {
-    private int a,b,s;
-    private TriRow[] triangle;
-    private MonitorTri monitor;
+public class PascalTriangle{
+    private int a,b,s,size;
+    private PasTriPiece[][] piece;
+    private MonitorPasTri monitor;
     public PascalTriangle(String n,String a,String b,String s){
         this(Integer.parseInt(n), Integer.parseInt(a), Integer.parseInt(b), Integer.parseInt(s));
     }
@@ -12,26 +12,26 @@ public class PascalTriangle {
         this.a = a;
         this.b = b;
         this.s = s;
-        triangle = new TriRow[size];
-        monitor = new MonitorTri(this,size);
-        for(int i = 0;i<size;++i){
-            triangle[i] = new TriRow(i,monitor);
+        this.size = size;
+        monitor = new MonitorPasTri(this,size);
+        piece = new PasTriPiece[size + 1][];
+
+        for(int r = 0;r<size;++r){
+            piece[r] = new PasTriPiece[r+1];
+            for (int c = 0; c < r+1; ++c) {
+                piece[r][c] = new PasTriPiece(r, c, monitor);
+            }
         }
     }
     public void startReverse(){
-        for(int i = monitor.rows()-1;i>=0;--i) {
-            triangle[i].start();
+        for(int r = size-1;r >= 0;--r) {
+            for(int c = r;c >= 0;--c) {
+                //System.out.println("Starting Thread: (" + r + "," + c + ")");
+                piece[r][c].start();
+            }
         }
     }
-    public TriRow getRow(int r){
-        return triangle[r];
-    }
-    public TriPiece getPiece(int r,int c){
-        return triangle[r].getPiece(c);
-    }
-    public void setPiece(int r, int c, int value){
-        triangle[r].setPiece(c,value);
-    }
+
     public int getS(){
         return s;
     }
@@ -41,14 +41,37 @@ public class PascalTriangle {
     public int getB(){
         return b;
     }
-    public boolean pieceHasValue(int r, int c){
-        return triangle[r].getPiece(c).isValueSet();
-    }
     public int getSize(){
-        return monitor.rows();
+        return size;
+    }
+    public PasTriPiece[] getRow(int r){
+        return piece[r];
+    }
+    public PasTriPiece getPiece(int r, int c) {
+        return piece[r][c];
+    }
+    public int getPieceValue(int r, int c) {
+        return monitor.getValue(r,c);
+    }
+    public boolean pieceHasValue(int r, int c){
+        return piece[r][c].isValueSet();
     }
 
     public boolean isRowComplete(int r){
-        return triangle[r].isComplete();
+        for (PasTriPiece p : piece[r]) {
+            System.out.println("Looking up Row:" + r +" -- "+!p.isValueSet());
+            System.out.println("Value: "+p.getValue());
+
+            if (!p.isValueSet()) {
+                return false;
+            }
+        }
+        return true; 
     }
+
+    public void setPiece(int r, int c, int value) {
+        piece[r][c].setValue(value);
+    }
+
+
 }
