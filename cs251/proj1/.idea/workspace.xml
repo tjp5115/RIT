@@ -5,17 +5,7 @@
     <bookmark url="file://$PROJECT_DIR$/src/PascalTriangle.java" line="27" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="10990d84-4978-48cd-9dcf-ca02ea44dd62" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/MonitorPasTri.java" />
-      <change type="DELETED" beforePath="C:\Users\Crystal\Desktop\RIT_Fall2015\cs251\proj1\src\MonitorTri.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\Crystal\Desktop\RIT_Fall2015\cs251\proj1\src\TriRow.java" afterPath="" />
-      <change type="MOVED" beforePath="C:\Users\Crystal\Desktop\RIT_Fall2015\cs251\proj1\src\TriPiece.java" afterPath="$PROJECT_DIR$/src/PasTriPiece.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/proj1/GenPasTri.class" afterPath="$PROJECT_DIR$/out/production/proj1/GenPasTri.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/PasTriOutput.java" afterPath="$PROJECT_DIR$/src/PasTriOutput.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/PascalTriangle.java" afterPath="$PROJECT_DIR$/src/PascalTriangle.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="10990d84-4978-48cd-9dcf-ca02ea44dd62" name="Default" comment="" />
     <ignored path="proj1.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -109,8 +99,8 @@
       <file leaf-file-name="MonitorPasTri.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/MonitorPasTri.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.51428574">
-              <caret line="31" column="52" selection-start-line="31" selection-start-column="52" selection-end-line="31" selection-end-column="52" />
+            <state vertical-scroll-proportion="0.2857143">
+              <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="39" />
               <folding>
                 <element signature="e#292#293#0" expanded="true" />
                 <element signature="e#319#320#0" expanded="true" />
@@ -599,7 +589,7 @@
       <workItem from="1441985519023" duration="184000" />
       <workItem from="1441985713590" duration="82000" />
       <workItem from="1441985805552" duration="3098000" />
-      <workItem from="1442017483840" duration="6065000" />
+      <workItem from="1442017483840" duration="6271000" />
     </task>
     <task id="LOCAL-00001" summary="initial cs251 project 1 commit. Debug needed">
       <created>1441857671803</created>
@@ -611,7 +601,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25725000" />
+    <option name="totallyTimeSpent" value="25931000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -625,7 +615,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.342827" sideWeight="0.49791667" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.342827" sideWeight="0.49791667" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17239584" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -1090,8 +1080,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/MonitorPasTri.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.51428574">
-          <caret line="31" column="52" selection-start-line="31" selection-start-column="52" selection-end-line="31" selection-end-column="52" />
+        <state vertical-scroll-proportion="0.2857143">
+          <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="39" />
           <folding>
             <element signature="e#292#293#0" expanded="true" />
             <element signature="e#319#320#0" expanded="true" />
