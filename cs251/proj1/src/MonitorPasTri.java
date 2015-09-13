@@ -1,22 +1,44 @@
 /**
- * Created by Crystal on 9/5/2015.
+ * Thread monitor for the PascalTriangle.
+ * @author  Tyler Paulsen
+ * @version 9/5/2015.
  */
 public class MonitorPasTri {
     private PascalTriangle triangle;
     private int size;
+
+    /**
+     * @param triangle - triangle to monitor.
+     * @param size - size of the triangle.
+     */
     public MonitorPasTri(PascalTriangle triangle,int size){
         this.triangle = triangle;
         this.size = size;
     }
 
+    /**
+     * @return  int number of rows in the triangle.
+     */
     public synchronized int rows(){
         return size;
     }
 
+    /**
+     * @param r - row of the piece
+     * @param c - column of the piece
+     * @param value - value to set the piece as.
+     */
     public synchronized  void putValue(int r, int c, int value){
         triangle.setPiece(r,c,value);
     }
 
+    /**
+     * will retrun the value of the piece if it has one. If no value is present, it will force the thread
+     * to wait until one is present.
+     * @param r - row of the piece
+     * @param c - column of the piece
+     * @return int - value of the piece
+     */
     public synchronized int getValue( int r, int c){
         try {
             //System.out.println("Calculating Thread: (" + r + "," + c + ")");
