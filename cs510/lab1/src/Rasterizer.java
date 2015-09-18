@@ -13,9 +13,11 @@
 ///
 
 import java.util.*;
+import java.lang.Math;
 
 public class Rasterizer {
-    
+    private int x0, y0, x1, y1;
+    simpleCanvas C;
     ///
     // number of scanlines
     ///
@@ -54,49 +56,39 @@ public class Rasterizer {
         System.out.println("*********************************************************");
         System.out.println("Drawing Line ("+x0+","+y0+")-("+x1+","+y1+")");
         // YOUR IMPLEMENTATION GOES HERE
-        if(needSwap(x0,x1)){
+        if(x0 > x1){
             System.out.println("Swapping points");
             drawLine(x1, y1, x0, y0, C);
             return;
         }
-
+        this.x0 = x0;
+        this.y0 = y0;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.C = C;
         if(x0 == x1 || y0 == y1){
             drawNoSlopeLine(x0, y0, x1, y1, C);
             return;
         }
+        int dx = Math.abs(x0 - x1);
+        int dy = Math.abs(y0 - y1);
+        boolean isLargeSlope = dx < dy;
 
-        if(y0 > y1){
-            System.out.println("Decreasing slope");
-            if( x1 - x0 < y0 - y1){
-                System.out.println("large Decreasing slope");
-                drawLargeSlopeNeg(x0, y0, x1, y1, C);
-            }else {
-                drawNormSlopeNeg(x0, y0, x1, y1, C);
-            }
-            return;
-        }
-
-        if(isLargeSlope(x0,x1,y0,y1)){
-            System.out.println("Large Slope");
-            drawLargeSlope(x0, y0, x1, y1, C);
-        }else{
-            drawNormSlope(x0, y0, x1, y1, C);
-        }
-
-
-    }
-    public boolean isLargeSlope(int x0,int x1, int y0, int y1){
-        if(y0 < y1){
-            return x0 - x1 > y0 - y1;
+        if(y0 > y1 && isLargeSlope) {
+            midpointLarge(x1,y1,-1,y0);
+        }else if( isLargeSlope ) {
+            midpointLarge(x0,y0,1,y1);
+        }else if(y0 > y1){
+            midpointSmall(-1);
         }else {
-            return x0 - x1 < y0 - y1;
+            midpointSmall(1);
         }
     }
 
-    public void drawNormSlopeNeg(int x0, int y0, int x1, int y1, simpleCanvas C){
+    public void midpointSmall(int dec){
         System.out.println("Drawing Line ("+x0+","+y0+")-("+x1+","+y1+")");
         int dE, dNE, x,y,d;
-        int dy = y0 - y1;
+        int dy = Math.abs(y1 - y0);
         int dx = x1 - x0;
         dE = 2 * dy;
         dNE = 2 * (dy - dx);
@@ -106,69 +98,31 @@ public class Rasterizer {
             if(d <= 0){
                 d += dE;
             }else{
-                --y;
+                y+=dec;
                 d += dNE;
             }
         }
         System.out.println("SetPixel("+x+","+y+")");
     }
-    public void drawLargeSlopeNeg(int x0, int y0, int x1, int y1, simpleCanvas C){
+    public void midpointLarge(int x, int y, int Xdec,int thresh) {
         System.out.println("Drawing Line ("+x0+","+y0+")-("+x1+","+y1+")");
-        int dE, dNE, x,y,d;
-        int dy = y0 - y1;
+        int dy = Math.abs(y1 - y0);
         int dx = x1 - x0;
-        dE = 2 * dx;
-        dNE = 2 * (dx - dy);
-        d = dE - dy;
-        for( x = x0, y = y0;y>=y1; --y){
+        int dE = 2 * dx;
+        int dNE = 2 * (dx - dy);
+        int d = dE - dy;
+        for( ;y<=thresh; y++){
             C.setPixel(x,y);
             if(d <= 0){
                 d += dE;
             }else{
-                ++x;
+                x+=Xdec;
                 d += dNE;
             }
         }
         System.out.println("SetPixel("+x+","+y+")");
     }
-    public void drawLargeSlope(int x0, int y0, int x1, int y1, simpleCanvas C){
-        System.out.println("Drawing Line ("+x0+","+y0+")-("+x1+","+y1+")");
-        int dE, dNE, x,y,d;
-        int dy = y1 - y0;
-        int dx = x1 - x0;
-        dE = 2 * dx;
-        dNE = 2 * (dx - dy);
-        d = dE - dy;
-        for( x = x0, y = y0;y<=y1; ++y){
-            C.setPixel(x,y);
-            if(d <= 0){
-                d += dE;
-            }else{
-                x++;
-                d += dNE;
-            }
-        }
-        System.out.println("SetPixel("+x+","+y+")");
-    }
-    public void drawNormSlope(int x0,int y0, int x1, int y1, simpleCanvas C){
-        System.out.println("Drawing Line ("+x0+","+y0+")-("+x1+","+y1+")");
-        int dE, dNE, x,y,d;
-        int dy = y1 - y0;
-        int dx = x1 - x0;
-        dE = 2 * dy;
-        dNE = 2 * (dy - dx);
-        d = dE - dx;
-        for( x = x0, y = y0;x<=x1; ++x){
-            C.setPixel(x,y);
-            if(d <= 0){
-                d += dE;
-            }else{
-                ++y;
-                d += dNE;
-            }
-        }
-        System.out.println("SetPixel("+x+","+y+")");
-    }
+
 
     public void drawNoSlopeLine(int x0, int y0, int x1, int y1, simpleCanvas C){
         System.out.println("Drawing Line ("+x0+","+y0+")-("+x1+","+y1+")");
@@ -192,8 +146,5 @@ public class Rasterizer {
         }
 
     }
-    public boolean needSwap(int x0, int x1){
-        return x0 > x1;
-    }
-      
+
 }

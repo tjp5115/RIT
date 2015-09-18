@@ -38,9 +38,8 @@ public class lineTest implements KeyListener {
 //        |  | |_ | |  |  |  | 
 //        |  |__| | |  `--'  | 
 //         \______|  \______/
-    /*
         // ######## The letter 'G' in green ########
-        S.setColor( 0.0f, 1.0f, 0.0f );
+        S.setColor(0.0f, 1.0f, 0.0f);
         R.drawLine( 80, 340, 220, 340, S );   // Horizontal left to right 
         R.drawLine( 40, 380, 80, 340, S );    // 315 degree slope        
         R.drawLine( 220, 340, 260, 380, S );  // 45 degree slope          
@@ -61,10 +60,10 @@ public class lineTest implements KeyListener {
         R.drawLine( 260, 520, 220, 560, S );  // 135 degree slope
         R.drawLine( 220, 560, 80, 560, S );
         R.drawLine( 80, 560, 40, 520, S );    // 225 degree slope
-        R.drawLine( 40, 520, 40, 380, S );    // Vertical top to bottom
+        R.drawLine(40, 520, 40, 380, S);    // Vertical top to bottom
 
         // ######## The letter 'O' in red ########
-        S.setColor( 1.0f, 0.0f, 0.0f );
+        S.setColor(1.0f, 0.0f, 0.0f);
         R.drawLine( 450, 320, 520, 340, S );  // 16.6 degree slope
         R.drawLine( 520, 340, 540, 360, S );  // 45 degree slope
         R.drawLine( 540, 360, 560, 450, S );  // 77.47 degree slope
@@ -84,47 +83,22 @@ public class lineTest implements KeyListener {
         R.drawLine( 480, 520, 420, 520, S );
         R.drawLine( 420, 520, 380, 480, S );
         R.drawLine( 380, 480, 380, 420, S );
-        R.drawLine( 380, 420, 420, 380, S );
-*/
+        R.drawLine(380, 420, 420, 380, S);
         // ######## Use blue color (0,0.5,1) to write your initials ########
-        //normal slope positive
-        R.drawLine( 200, 300, 400, 500, S );
-        R.drawLine( 200, 300, 400, 400, S );
-
-        //normal slope negative
-        R.drawLine( 200, 300, 0, 100, S );
-        R.drawLine( 200, 300, 0, 200, S );
-
-        //steep slope positive
-        R.drawLine( 200, 300, 300, 500, S );
-
-        //steep slope negative
-        R.drawLine( 200, 300, 100, 100, S );
-        //horizontal and vertical
-        R.drawLine( 200, 300 ,200, 500, S );
-        R.drawLine( 200, 300 ,400, 300, S );
-        R.drawLine( 200, 300 ,0, 300, S );
-        R.drawLine( 200, 300, 200, 100, S );
-
-        //normal slope negative -- 4
-        R.drawLine( 200, 300, 400, 200, S );
-        R.drawLine( 200, 300, 400, 100, S );
-
-        //steep slop negative -- 4
-        R.drawLine( 200, 300, 300, 100, S );
-
-        //normal slope negative -- 2
-        R.drawLine( 200, 300, 0, 500, S );
-        R.drawLine( 200, 300, 0, 400, S );
-
-        //steep slope negative -- 2
-        R.drawLine( 200, 300, 100, 500, S );
 
         S.setColor( 0.0f, 0.5f, 1.0f );
-
         //
         // YOUR CODE HERE
         //
+        R.drawLine( 50, 275, 250, 275, S ); //top T  size = 200 W
+        R.drawLine( 250,275, 250, 225, S ); //right T size = 50  H
+        R.drawLine( 250, 225, 175, 225, S ); //bot T size = 75  W
+        R.drawLine( 175, 225, 175, 50, S ); //right T size = 175  W
+        R.drawLine( 175, 50, 125 ,50 , S ); //bot T size = 50  W
+        R.drawLine( 125 ,50 , 125, 225, S ); //left T size = 175  W
+        R.drawLine( 125, 225, 50, 225,S ); //left T size = 75  W
+        R.drawLine(50, 225, 50, 275,S ); //left T size = 75  W
+
 
 
     }
