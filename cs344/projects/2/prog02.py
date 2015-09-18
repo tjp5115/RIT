@@ -164,8 +164,6 @@ def  relprimeHelper(n, m, i):
 		return relprimeHelper(n, m, i+1)
 
 '''
-# Exercise 8
-# DEFINE binary HERE
 def  binary (n):
 	if n == 0:
 		return 0
@@ -181,13 +179,18 @@ def  binaryHelper(n, i):
 	else:
 		return binaryHelper(int(n/2), i+1) + exp(10, i-1)*n%2
 '''
+# Exercise 8
+# DEFINE binary HERE
 def binary(n):
 	if n < 0:
+		#this feels like cheating
+
 		return -1*int(bin(n*-1)[2:])
 	else:
 		return int(bin(n)[2:])
 
-
+'''
+#all of the check-expect tests from impcore converted to asserts.
 assert sigma(   0,  0) == 0
 assert sigma(   0 , 5) == 15
 assert sigma(   0 ,10) == 55
@@ -394,4 +397,4 @@ assert binary(   16) == 10000
 assert binary(   -5) == -101
 assert binary(  -12) == -1100
 
-
+'''

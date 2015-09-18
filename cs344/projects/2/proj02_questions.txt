@@ -1,0 +1,11 @@
+1) Which language was easier Python or Impcore? Why?
+    Python was easier. Half of time time with Impcore, I was chasing parenthesis. I understand the syntax for python,
+    and it was extremely easy to convert my functions over to it.
+
+2)Did not having the built-in libraries make it harder?
+    Yes, it did. The libraries needed had to be implemented by recursion. My implementation is much slower and harder
+    to understand than the python implementation.
+
+3) Which gave a more accurate answer? Why?
+    Impcore did because it only can understand integers. In python, i had to cast the majority of the divisions to
+    maintain the same functionality as Impcore had
