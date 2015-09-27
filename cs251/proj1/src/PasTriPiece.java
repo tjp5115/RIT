@@ -6,56 +6,42 @@
  */
 import java.lang.Thread;
 public class PasTriPiece extends Thread{
-    private int r,c,value;
-    private boolean isValueSet;
-    private MonitorPasTri monitor;
+    private int r,c;
+    private PascalTriangle triangle;
 
     /**
      * Constructor
      * @param r - row
      * @param c - column
-     * @param monitor - monitor for object
+     * @param triangle - monitor and a,b,s values for the triangle piece.
      */
-    PasTriPiece(int r,int c,MonitorPasTri monitor){
+    PasTriPiece(int r,int c, PascalTriangle triangle){
        // System.out.println("Creating Thread: ("+r+","+c+")");
         this.r = r;
         this.c = c;
-        this.monitor = monitor;
-    }
-
-    /**
-     * @return boolean if value for piece is set.
-     */
-    public boolean isValueSet(){
-        return isValueSet;
-    }
-
-    /**
-     * @return int - value of the piece
-     */
-    public int getValue(){
-       return value;
-    }
-
-    /**
-     * @param value - sets the value and the boolean to true.
-     */
-    public void setValue(int value){
-        this.value = value;
-        isValueSet = true;
+        this.triangle = triangle;
     }
 
     /**
      * run method. Uses the monitor to get the piece, and to control the wait\notify
      */
     public void run(){
-        monitor.getValue(r, c);
-    }
-
-    /**
-     * @return String - returns the value as a string.
-     */
-    public String toString(){
-        return Integer.toString(value);
+        int val;
+        if (r == 0 && c == 0) {
+            triangle.getMonitor().putValue(r, c, triangle.getS());
+            //System.out.println("Value Set: (" + r + "," + c + ") = " + triangle.getPiece(r, c));
+        }else if (c == 0  ) {
+            val = triangle.getA() + triangle.getMonitor().getValue(r - 1, c);
+            triangle.getMonitor().putValue(r, c, val);
+            //System.out.println("Value Set: (" + r + "," + c + ") = "+triangle.getPiece(r,c));
+        } else if (r==c) {
+            val = triangle.getMonitor().getValue(r -1, c - 1) + triangle.getB();
+            triangle.getMonitor().putValue(r, c, val);
+            //System.out.println("Value Set: (" + r + "," + c + ") = "+triangle.getPiece(r,c));
+        } else if (c != 0) {
+            val = triangle.getMonitor().getValue(r - 1, c - 1) + triangle.getMonitor().getValue(r - 1, c);
+            triangle.getMonitor().putValue(r, c, val);
+            //System.out.println("Value Set: (" + r + "," + c + ") = "+triangle.getPiece(r,c));
+        }
     }
 }

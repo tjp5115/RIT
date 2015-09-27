@@ -83,13 +83,14 @@ public class lineTest implements KeyListener {
         R.drawLine( 480, 520, 420, 520, S );
         R.drawLine( 420, 520, 380, 480, S );
         R.drawLine( 380, 480, 380, 420, S );
-        R.drawLine(380, 420, 420, 380, S);
+        R.drawLine( 380, 420, 420, 380, S);
         // ######## Use blue color (0,0.5,1) to write your initials ########
 
         S.setColor( 0.0f, 0.5f, 1.0f );
         //
         // YOUR CODE HERE
         //
+        // ######## The letter 'T' in blue ########
         R.drawLine( 50, 275, 250, 275, S ); //top T  size = 200 W
         R.drawLine( 250,275, 250, 225, S ); //right T size = 50  H
         R.drawLine( 250, 225, 175, 225, S ); //bot T size = 75  W
@@ -98,6 +99,25 @@ public class lineTest implements KeyListener {
         R.drawLine( 125 ,50 , 125, 225, S ); //left T size = 175  W
         R.drawLine( 125, 225, 50, 225,S ); //left T size = 75  W
         R.drawLine(50, 225, 50, 275,S ); //left T size = 75  W
+
+        // ######## The letter 'P' in blue ########
+        R.drawLine(400, 275, 480, 275,S ); //left T size = 75  W
+        R.drawLine(480, 275, 520, 240, S );  // 2
+        R.drawLine(520, 240, 520, 175, S );  // 196.71 degree slope
+        R.drawLine(520, 175, 480, 140, S );  // 2
+        R.drawLine(480, 140, 450, 140, S );
+        R.drawLine(450, 140, 450, 50, S );
+        R.drawLine(450, 50, 400, 50, S );
+        R.drawLine(400, 50, 400, 275, S );
+
+        // inner P
+        R.drawLine(460, 250, 490, 225, S );  // 2
+        R.drawLine(490, 225, 490, 190, S );  // 196.71 degree slope
+        R.drawLine(490, 190, 460, 165, S );  // 2
+        R.drawLine(460, 165, 440, 165, S );
+        R.drawLine(440, 165, 440, 250, S );
+        R.drawLine(440, 250, 460, 250, S );
+
 
 
 

@@ -11,14 +11,11 @@ public class GenPasTri {
     public static void main(String args[]){
         if (args.length != 4){
             System.out.println("Invalid number of arguments - expected 4. GenPasTri <N> <A> <B> <S>");
+            System.exit(0);
         }
-        try{
-            PascalTriangle pasTri = new PascalTriangle(args[0], args[1], args[2], args[3]);
-            PasTriOutput out = new PasTriOutput(pasTri);
-            out.start();
-            pasTri.startReverse();
-        }catch(NumberFormatException nfe) {
-            System.out.println("Could not parse String to Integer. Please check input. Exiting.");
-        }
+        PascalTriangle pasTri = new PascalTriangle(args[0], args[1], args[2], args[3]);
+        PasTriOutput out = new PasTriOutput(pasTri);
+        out.start();
+        pasTri.startReverse();
     }
 }

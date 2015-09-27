@@ -66,8 +66,8 @@ def get_bin_speed(index_speed, index_min_speed, index_bin_size):
     :param index_bin_size: size of the bin
     :return: the speeds that the bins represent.
     """
-    min_speed = index_speed*2+index_min_speed
-    return str(min_speed) + "-" +str(min_speed+2)
+    min_speed = index_speed*index_bin_size+index_min_speed
+    return str(min_speed) + "-" +str(min_speed+index_bin_size)
 
 
 def create_bins(file, min_speed, max_speed, bin_size):
@@ -99,11 +99,11 @@ def create_bins(file, min_speed, max_speed, bin_size):
 
 file1 = "UNCLASSIFIED_Speed_Observations_for_128_vehicles.csv"
 print("Investigating data from file: ", file1)
-unclassified_bins = create_bins(file1, 38, 80, 2)
+unclassified_bins = create_bins(file1, 38, 80, .5)
 print("bins: ", unclassified_bins)
 var, index = otsu(unclassified_bins)
 print("lowest mixed var: ", var)
-print("bin ( %s ) index: %s" % (get_bin_speed(index, 38, 2), index))
+print("bin ( %s ) index: %s" % (get_bin_speed(index, 38, .5), index))
 print("bin[%s] = %s" % (index, unclassified_bins[index]))
 print()
 

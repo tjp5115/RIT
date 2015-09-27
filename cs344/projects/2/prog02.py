@@ -1,6 +1,6 @@
 __author__ = 'Tyler Paulsen'
 # Name: Tyler Paulsen 
-# Time spent on assignment: ~4 hrs
+# Time spent on assignment: ~1 hr
 # Collaborators: 
 
 #helper functions

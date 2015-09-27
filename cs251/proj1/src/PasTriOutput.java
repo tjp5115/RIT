@@ -19,9 +19,15 @@ public class PasTriOutput extends Thread{
      * for a piece if it has no value.
      */
     public void run(){
-        for(int r = 0;r<triangle.getSize();++r){
-            for (int c = 0; c <= r; ++c) {
-                System.out.print(triangle.getPieceValue(r,c)+" ");
+        for(int r = 0;r<triangle.getMonitor().rows();++r){
+            int c = 0;
+            for(;;){
+                System.out.print(triangle.getMonitor().getValue(r,c));
+                c++;
+                if (c > r){
+                    break;
+                }
+                System.out.print(" ");
             }
             System.out.println();
         }
