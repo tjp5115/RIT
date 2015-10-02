@@ -66,32 +66,33 @@ public class Rasterizer {
         et = new EdgeTable(n, x, y);
         al = new LinkedList<>();
 
-        System.out.println(et);
         int scanline = et.getScanlineMin();
         do {
-            System.out.println(et);
             updateActiveList(scanline);
             if(et.getScanline(scanline) != null){
                 al.addAll(et.getScanline(scanline));
-                //et.remove(scanline);
             }
             Collections.sort(al);
-            drawActiveList(scanline,new LinkedList<>(al),C);
-            System.out.println(scanline);
+            drawActiveList(scanline, new LinkedList<>(al), C);
             scanline++;
             updateBuckets();
         }while(!al.isEmpty());
-        System.out.println("All done");
     }
 
+    /**
+     * draws the active list to the canvas. Removes objects from the Active list until no more objects exist.
+     * @param y - scanline to draw
+     * @param al - active list.
+     * @param C - canvas to draw too
+     */
     private void drawActiveList(int y, LinkedList<Bucket> al,simpleCanvas C) {
-        System.out.println("init: "+al);
         Bucket b0 = al.pollFirst();
         Bucket b1 = al.pollFirst();
         if(b0 == null){
             return;
         }
         int x = b0.x;
+        // loop until we have no more buckets.
         while( b1 != null && b0 != null){
             if(b0.dy == 0){
                 b0 = b1;
@@ -102,15 +103,11 @@ public class Rasterizer {
                 b1 = al.pollFirst();
                 continue;
             }
-
-            //System.out.println("b0: "+b0);
-            //System.out.println("b1: "+b1);
+            // draw then the current x is greater than the lowest bucket (b0)
             if(x > b0.x) {
-                System.out.print(x);
-                System.out.println(" " + y);
                 C.setPixel(x, y);
             }
-            //System.out.println("x="+x);
+            // get two new buckets if we reach the highest active bucket (b1)
             if(x == b1.x){
                 b0 = al.pollFirst();
                 b1 = al.pollFirst();
@@ -119,6 +116,10 @@ public class Rasterizer {
         }
     }
 
+    /**
+     * remove from the active list if the yMax of the bucket in the Active list is <= to the current scanline
+     * @param y - scanline to update on
+     */
     private void updateActiveList(int y) {
         for (Iterator<Bucket> iterator = al.iterator(); iterator.hasNext();) {
             if (iterator.next().yMax <= y) {
@@ -126,6 +127,10 @@ public class Rasterizer {
             }
         }
     }
+
+    /**
+     * updates the buckets with the bucket update method.
+     */
     private void updateBuckets(){
         for(Bucket b : al) b.update();
     }
