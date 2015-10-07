@@ -1,0 +1,10 @@
+Tyler Paulsen
+Readme for python imports
+
+The graphing API used is matplotlib. 
+To us the API, I installed the python package manager MiniConda ( V3.4 ): http://conda.pydata.org/miniconda.html
+The package manager has matplotlib and its dependencies all by default, so there is no need to install them all separatly. 
+
+A note on the document: HW04_Paulsen_Tyler__MyClassifications.txt
+	I had to make a modification to the test data file. It looked like line 1 had both a header, and a data entry on the same line: Attr1,Attr2,Attr3, 2.6, 9.2, 4.8
+	I split this line up into two separate lines. I have supplied the file along with my submission.

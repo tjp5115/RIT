@@ -1,16 +1,25 @@
-/**
- * Created by Crystal on 10/1/2015.
- */
 import edu.rit.pj2.LongLoop;
 import edu.rit.pj2.Task;
 import edu.rit.util.Random;
 import edu.rit.pj2.vbl.LongVbl;
-
+/**
+ * GamblersRuin is an SMP parallel program that plays a game called gambler's ruin.
+ * Prints out the probability  at the end of running the program. First Alex, then Blake
+ * Usage: java pj2 GamblersRuin <seed> <A> <B> <N>
+ *
+ * @author Tyler Paulsen
+ * @version 1-Oct-2015
+ */
 public class GamblersRuin extends Task{
     long seed, N;
     int alexDollar, blakeDollar;
     LongVbl countBlake;
+
+    /**
+     * @param args - arguments used in program. Should be four: <long> <int> <int> <long>
+     */
     public void main(String []args) {
+        // validate command line arguments
         if (args.length != 4) usage();
         try {
             seed = Long.parseLong(args[0]);
@@ -24,6 +33,7 @@ public class GamblersRuin extends Task{
         if (alexDollar <= 0 || blakeDollar <= 0 || N <= 0) usage();
 
         countBlake = new LongVbl.Sum(0);
+        //play gamblers ruin
         parallelFor (0, N - 1) .exec(new LongLoop() {
             Random rand;
             LongVbl thrCountBlake;
@@ -51,11 +61,16 @@ public class GamblersRuin extends Task{
                 }
             }
         });
+        //computer and print results.
         float p =  (N - countBlake.item)/ (float)N;
         System.out.println(p);
         p = countBlake.item / (float)N;
         System.out.println(p);
     }
+
+    /**
+     * Print a usage message and exit
+     */
     public static void usage(){
         System.err.println("java pj2 GamblersRuin <seed> <A> <B> <N>");
         System.err.println("<seed> is a random seed; it must be an integer (type long).");
