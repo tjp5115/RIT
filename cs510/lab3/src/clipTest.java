@@ -70,7 +70,6 @@ public class clipTest implements KeyListener {
         float wx[] = new float [50];
         float wy[] = new float [50];
         int wl;
-
         ///
 	// Draw the clipping regions
 	///
@@ -80,7 +79,6 @@ public class clipTest implements KeyListener {
         drawClipRegion(  30,  10,  70,  80 );
         drawClipRegion(  90,  34, 120,  60 );
         drawClipRegion(  90,  80, 130, 110 );
-
         ///
         // first polygon:  entirely within region
         ///
@@ -103,7 +101,6 @@ public class clipTest implements KeyListener {
         if( wl > 0 ) {
             T.printPoly( wl, wx, wy );
         }
-
         ///
         // third polygon:  halfway outside on left
         ///
@@ -117,7 +114,6 @@ public class clipTest implements KeyListener {
         ///
         // fourth polygon:  part outside on right
         ///
-
         wl = 0;
         wl = C.clipPolygon( 4, quad4x, quad4y, wx, wy, 10, 110, 50, 150 );
         T.setColor ( 1.0f, 0.0f, 1.0f );        // magenta
@@ -137,13 +133,11 @@ public class clipTest implements KeyListener {
         ///
         // sixth polygon:  outside on top, right, and bottom
         ///
-
         wl = 0;
         wl = C.clipPolygon( 7, hept1x, hept1y, wx, wy, 90, 80, 130, 110 );
         T.setColor ( 0.7f, 0.7f, 0.7f );        // gray
         T.printLoop( 7, hept1x, hept1y );
         T.printPoly( wl, wx, wy );
-
     }
 
     // Because we are a KeyListener

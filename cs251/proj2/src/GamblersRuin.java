@@ -13,7 +13,7 @@ import edu.rit.pj2.vbl.LongVbl;
 public class GamblersRuin extends Task{
     long seed, N;
     int alexDollar, blakeDollar;
-    LongVbl countBlake;
+    LongVbl countBlake,countAlex;
 
     /**
      * @param args - arguments used in program. Should be four: <long> <int> <int> <long>
@@ -33,14 +33,16 @@ public class GamblersRuin extends Task{
         if (alexDollar <= 0 || blakeDollar <= 0 || N <= 0) usage();
 
         countBlake = new LongVbl.Sum(0);
+        countAlex= new LongVbl.Sum(0);
         //play gamblers ruin
         parallelFor (0, N - 1) .exec(new LongLoop() {
             Random rand;
-            LongVbl thrCountBlake;
+            LongVbl thrCountBlake,thrCountAlex;
 
             public void start() {
                 rand = new Random(seed + rank());
                 thrCountBlake = threadLocal(countBlake);
+                thrCountAlex = threadLocal(countAlex);
             }
 
             public void run(long i) {
@@ -55,17 +57,19 @@ public class GamblersRuin extends Task{
                         bd -= 1;
                     }
                 }
-                if (ad == 0) {
+                if (bd == 0) {
                     // System.out.println("Blake WON!!!");
                     ++thrCountBlake.item;
+                }else{
+                    ++thrCountAlex.item;
                 }
             }
         });
         //computer and print results.
-        float p =  (N - countBlake.item)/ (float)N;
-        System.out.println(p);
-        p = countBlake.item / (float)N;
-        System.out.println(p);
+        float ap =  (float)countAlex.item / (float)N;
+        System.out.println(ap);
+        float bp = (float)countBlake.item / (float)N;
+        System.out.println(bp);
     }
 
     /**
