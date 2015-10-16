@@ -1,0 +1,123 @@
+;;Author: Tyler Paulsen
+
+;;Question 1
+(define findInList (lst x) 
+	(if (= lst '())
+		#f
+		(if (= (car lst) x)
+			#t
+			(findInList (cdr lst) x)
+		)
+	)
+)
+;;Question 2
+(define maxminValHelper (lst x gt_lt)
+	(if (= lst '())
+		x
+		(if (= x 0)
+			(maxminValHelper lst (car lst) gt_lt)
+			(if (gt_lt x (car lst))
+				(maxminValHelper (cdr lst) (car lst) gt_lt)
+				(maxminValHelper (cdr lst) x gt_lt)
+			)
+		)
+	)
+)
+(define maxValue (lst)
+	(maxminValHelper lst 0 <)	
+)
+
+;;Question 3
+(define minValue (lst)
+	(maxminValHelper lst 0  >)	
+)
+
+;;Question 4
+(define avgValueHelper (lst c sum)
+	(if (= lst '())
+		(/ sum c)
+		(avgValueHelper (cdr lst) (+ c 1) (+ sum (car lst)))
+	)
+)
+(define avgValue (lst)
+	(if (= lst '())
+		0
+		(avgValueHelper lst 0 0)
+	)
+)
+;;Question 5
+(define length (lst)
+	(if (= lst '())
+		0
+		(+ 1 (length (cdr lst)))
+	)
+)
+(define append (lst1 lst2)
+	(if (= lst1 '())
+		lst2
+		(append (cdr lst1) (cons (car lst1) lst2))
+	)
+)
+(define removeVal (lst x ret)
+	(if (= x (car lst))
+		(append (cdr lst) ret)
+		(removeVal (cdr lst) x (cons (car lst) ret))
+	)
+)
+(define medValHelper (lst len)
+	(if (= len 0)
+		(minValue lst)
+		(medValHelper  (removeVal lst (minValue lst) '() ) (- len 1))
+	)
+)
+(define mod ( val div )
+	(if (< val div)
+		val
+		(mod (- val div) div)
+	)
+)
+(define medValue (lst)
+	(if (= lst '())
+		0
+		(if (= (mod (length lst) 2) 0)
+			(/ (+ (medValHelper lst (/ (- (length lst) 1)  2))  (medValHelper lst (/ (length lst) 2))) 2)
+ 			(medValHelper lst (/ (length lst)  2))  
+		)	
+	)
+)
+
+;question 1 tests
+;;(findInList '(1 2 3 4) 3)
+;;(findInList '(1 2 3 4) 5)
+;;(findInList '() 5)
+;;Question 2 tests
+;;'()
+;;(maxVal '(1 2 3 4) )
+;;(maxVal '() )
+;;(maxVal '(5 2 4 6 9 7 18) )
+;;(maxVal '(25 2 4 6 9 7 18) )
+;;(maxVal '(25 2 4 66 9 7 18) )
+;;Question 3 tests
+;;'()
+;;(minVal '(1 2 3 4) )
+;;(minVal '() )
+;;(minVal '(5 2 4 6 9 7 1) )
+;;(minVal '(5 2 4 1 9 7 18) )
+;;(minVal '(5 1 4  9 7 18) )
+;;Question 4 tests
+;;'()
+;;(avgValue  '(1 2 3 4 5) )
+;;(avgValue  '(11 22 33 44 55) )
+;;(avgValue  '(11 22 33 44) )
+;;(avgValue  '() )
+;;(avgValue  '(5) )
+;;Question 5 tests
+;;'()
+;;(medValue  '(1 2 3 4) )
+;;(medValue  '(1 2 3 4 5) )
+;;(medValue  '(5 23 4 1 2) )
+;;'()
+;;(mod 5 2)
+;;(mod 4 2)
+(use prog03_test.scm)
+(medValue '(100 101 65 76 32 86))
