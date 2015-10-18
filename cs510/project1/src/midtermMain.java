@@ -7,6 +7,9 @@
 //  This file should not be modified by students.
 //
 
+import javafx.event.EventDispatcher;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -30,7 +33,10 @@ public class midtermMain implements KeyListener, MouseListener {
     midtermMain (int w, int h)
     {
         // define your canvas
+
         C = new cgCanvas (w, h);
+
+
 
         // load all of your polygons
         float x[] = new float [12];
@@ -147,6 +153,7 @@ public class midtermMain implements KeyListener, MouseListener {
 	    displayNumber = 0; // viewport
 
         doDraw();
+
     }
     public void keyPressed(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
@@ -271,7 +278,7 @@ public class midtermMain implements KeyListener, MouseListener {
     ///
     // The display function
     ///
-    public void doDraw()
+    public synchronized void  doDraw()
     {
         ///
         // Set clear color to black
@@ -351,7 +358,7 @@ public class midtermMain implements KeyListener, MouseListener {
                     // adjust xaspect and shift to next column
                     xaspect = wdiff/(j+1);
                     C.setViewport( x, y, xaspect, yaspect );
-                    drawLetters( C );
+                    drawLetters(C);
                     x += wdiff + 35;
                 }
 
@@ -372,24 +379,30 @@ public class midtermMain implements KeyListener, MouseListener {
         ///
         // Initiate a redraw
         ///
+
         C.repaint();
 
     }
 
     static public void main(String[] args)
     {
-
         midtermMain M = new midtermMain (drawWidth, drawHeight);
-        M.C.addKeyListener (M);
-        M.C.addMouseListener (M);
+        M.C.addKeyListener(M);
+        M.C.addMouseListener(M);
         M.doDraw();
 
 
-        Frame f = new Frame( "CG Midterm" );
-        f.add("Center", M.C);
-        f.pack();
-        f.setResizable (false);
-        f.setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Frame f = new Frame("CG Midterm");
+                f.add("Center", M.C);
+                f.pack();
+                f.setResizable(false);
+                f.setVisible(true);
+            }
+        });
+
 
     }
 

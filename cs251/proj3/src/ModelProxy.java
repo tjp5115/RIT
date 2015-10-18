@@ -56,6 +56,7 @@ public class ModelProxy implements ViewListener{
      */
     public void quit()throws IOException{
         out.printf("quit\n");
+        socket.close();
     }
 
     private class ReaderThread extends Thread{
@@ -96,6 +97,7 @@ public class ModelProxy implements ViewListener{
                            modelListener.win(id);
                            break;
                        case "quit":
+                           socket.close();
                            modelListener.quit();
                            break;
                    }
@@ -103,7 +105,6 @@ public class ModelProxy implements ViewListener{
            }catch(IOException ioe) {}
            finally {
                try{
-                   System.out.println("Socket closed.");
                    socket.close();
                }catch(IOException ioe){}
            }

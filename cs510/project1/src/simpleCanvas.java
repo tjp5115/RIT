@@ -17,6 +17,7 @@
 //
 //  with my thanks.
 ///
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.geom.*;
@@ -49,7 +50,7 @@ public class simpleCanvas extends Canvas {
         poly_draw = new LinkedList<Polygon>();
         poly_draw_color = new LinkedList<Color>();
 
-        setSize (w, h);
+        setSize(w, h);
 
     }
 
@@ -100,13 +101,28 @@ public class simpleCanvas extends Canvas {
     ///
     protected void setPixel (int x, int y)
     {
-        I.setRGB (x, (height - y - 1), curColor.getRGB());
+        try {
+            I.setRGB(x, (height - y - 1), curColor.getRGB());
+        }catch(Exception e){
+            System.out.println("("+x+","+y+")");
+            if (x == width){
+                x += -1;
+            }
+            if(y == height){
+                y += -1;
+            }
+            I.setRGB(x, (height - y - 1), curColor.getRGB());
+        }
     }
 
     public void paint(Graphics g)
     {
         // draw pixels
-        g.drawImage(I, 0, 0, Color.red, null);
+
+        if( !g.drawImage(I, 0, 0, Color.red, null) ){
+            System.out.println("pixels are still being drawn");
+            System.exit(00);
+        }
 
         // draw polys
         ListIterator<Polygon> II = poly_draw.listIterator(0);

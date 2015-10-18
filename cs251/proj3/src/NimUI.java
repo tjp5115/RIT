@@ -388,7 +388,7 @@ public class NimUI implements ModelListener
     public void quit()throws IOException{
         onSwingThreadDo (new Runnable() {
             public void run() {
-                System.exit(1);
+                System.exit(0);
             }
         });
     }
@@ -412,6 +412,7 @@ public class NimUI implements ModelListener
     private void stop(){
         try{
             viewListener.quit();
+            System.exit(0);
         }catch(IOException ioe){
             ioError();
         }
