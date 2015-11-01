@@ -10,6 +10,7 @@
 //
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.nio.*;
 import java.awt.event.*;
 import javax.media.opengl.*;
@@ -221,25 +222,73 @@ public class cgShape extends simpleShape
         float pi = 3.14159265359f;
         double theta = 2*pi / radialDivisions;
         double rotation = theta;
-        Point []radPoint1 = new Point[radialDivisions];
-
-        float x = (float)(radius*Math.cos(0));
-        float z = (float)(radius*Math.sin(0));
-        radPoint1[0] = new Point(x, 0.5f ,z);
-        Point p1,p2,p3,p4;
-        for(int i = 1; i < radialDivisions;++i){
-            x = (float)(radius*Math.cos(theta));
-            z = (float)(radius*Math.sin(theta));
-            radPoint1[i] = new Point(x, 0.5f ,z);
-            p2 = radPoint1[i-1];
-            p1 = radPoint1[i];
-            addTriangle(0f,0.5f,0f,p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
-            theta += rotation;
+        Point p1, p2, p3;
+        float x, z;
+        float y = .5f;
+        float segments = 1f / heightDivisions;
+        float radiusInc =  radius / heightDivisions;
+        radius = radiusInc;
+        ArrayList<Quadrilateral> quad = new ArrayList<Quadrilateral>();
+        System.out.println("HeightDiv = "+heightDivisions);
+        Quadrilateral q;
+        Point [][] circle = new Point[heightDivisions][];
+        for (int i = 0; i < heightDivisions;i++ ) {
+            y -= segments;
+            circle[i] = new Point[radialDivisions];
+            int k = 0;
+            for (; k < radialDivisions; ++k) {
+                x = (float) (radius * Math.cos(theta));
+                z = (float) (radius * Math.sin(theta));
+                circle[i][k] = new Point(x, y, z);
+                theta += rotation;
+                if(i == 0 && k > 0){
+                    p2 = circle[i][k-1];
+                    p3 = circle[i][k];
+                    p1 = new Point(0f,.5f,0f);;
+                    addTriangle(p3.x,p3.y,p3.z,p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
+                }else if (k > 0){
+                    //polygon segments.
+                    q = new Quadrilateral();
+                    q.p1 = circle[i-1][k-1];
+                    q.p2 = circle[i-1][k];
+                    q.p3 = circle[i][k-1];
+                    q.p4 = circle[i][k];
+                    q.draw();
+                }
+            }
+            if(i == 0 && k > 0){
+                p1 = new Point(0f,.5f,0f);;
+                p3 = circle[i][0];
+                p2 = circle[i][k-1];
+                addTriangle(p3.x,p3.y,p3.z,p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
+            }else if (k > 0){
+                //polygon segments.
+                q = new Quadrilateral();
+                q.p1 = circle[i-1][k-1];
+                q.p2 = circle[i-1][0];
+                q.p3 = circle[i][k-1];
+                q.p4 = circle[i][0];
+                q.draw();
+            }
+            radius += radiusInc;
+            theta = rotation;
         }
-        p2 = radPoint1[radialDivisions-1];
-        p1 = radPoint1[0];
-        addTriangle(0f, 0.5f, 0f, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
 
+        int k = circle.length-1;
+        System.out.println("k: "+k);
+        int i = 1;
+        for (; i < radialDivisions; ++i){
+            System.out.print(circle[k][i - 1]);
+            System.out.println(circle[k][i]);
+            p2 = circle[k][i-1];
+            p1 = circle[k][i];
+            addTriangle(0f,-0.5f,0f,p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
+        }
+        p1 = circle[k][0];
+        p2 = circle[k][i-1];
+        addTriangle(0f,-0.5f,0f,p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
+
+        /*
         float len = 1.0f / heightDivisions;
         float v;
         Quadrilateral q;
@@ -259,6 +308,7 @@ public class cgShape extends simpleShape
                 v += len;
             }
         }
+        */
     }
 
     ///
