@@ -2,6 +2,10 @@
  * Created by Crystal on 10/14/2015.
  */
 import java.io.IOException;
+
+/**
+ * Interface for the model listener. Used by the UI.
+ */
 public interface ModelListener {
         /**
          * Sent to a client when a game session has been joined
@@ -53,4 +57,6 @@ public interface ModelListener {
          * @throws IOException
          */
         void quit()throws IOException;
+
+
 }

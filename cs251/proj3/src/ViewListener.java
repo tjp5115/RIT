@@ -2,6 +2,10 @@
  * Created by Tyler on 10/14/2015.
  */
 import java.io.IOException;
+
+/**
+ * view listener for the Proxy.
+ */
 public interface ViewListener {
 
     /**
@@ -30,4 +34,10 @@ public interface ViewListener {
      * @throws IOException
      */
     void quit()throws IOException;
+
+    /**
+     * used if the user closes the game. closes socket connection, and exits program.
+     * @throws IOException
+     */
+    void exit() throws IOException;
 }

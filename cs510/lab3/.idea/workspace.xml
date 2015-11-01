@@ -39,7 +39,7 @@
       <file leaf-file-name="clipper.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/clipper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.073913045">
+            <state vertical-scroll-proportion="0.0">
               <caret line="154" column="57" selection-start-line="154" selection-start-column="57" selection-end-line="154" selection-end-column="57" />
               <folding>
                 <element signature="e#0#7856#0" expanded="true" />
@@ -99,7 +99,8 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -134,8 +135,7 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -442,11 +442,12 @@
       <workItem from="1444353002526" duration="14411000" />
       <workItem from="1444532005050" duration="1247000" />
       <workItem from="1444790125777" duration="56000" />
+      <workItem from="1445800525868" duration="23000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31918000" />
+    <option name="totallyTimeSpent" value="31941000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -500,6 +501,27 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/clipTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="139" column="34" selection-start-line="139" selection-start-column="34" selection-end-line="139" selection-end-column="34" />
+          <folding>
+            <element signature="e#5259#5260#0" expanded="true" />
+            <element signature="e#5305#5306#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/clipper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#7856#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/clipTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -653,7 +675,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/clipper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.073913045">
+        <state vertical-scroll-proportion="0.0">
           <caret line="154" column="57" selection-start-line="154" selection-start-column="57" selection-end-line="154" selection-end-column="57" />
           <folding>
             <element signature="e#0#7856#0" expanded="true" />

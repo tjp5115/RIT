@@ -1,0 +1,11 @@
+Author: Tyler Paulsen
+
+1)Which of the three languages was easier, Python, Impcore, or Standard ML? Why?
+	Python, could use or,and conditionals. If there was one in standard ML, i could not get it to work. I had to create my own.
+
+2) Which took longer to implement? Why?
+	Impcore, figuring out how to implement some of the functions recursively took some time. 
+	Since the algorithm was already created, I could copy that algorithm to my standard ML project
+
+3)Which took more code to implement?
+	Impcore, had 255 lines of code almost 40 more than the Standard ML project. 

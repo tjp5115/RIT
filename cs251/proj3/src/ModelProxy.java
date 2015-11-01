@@ -6,18 +6,30 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * Model proxy to communicate direct communication between the UI and the Server.
+ */
 public class ModelProxy implements ViewListener{
     private Socket socket;
     private PrintStream out;
     private Scanner in;
     private ModelListener modelListener;
 
+    /**
+     * constructor for the proxy
+     * @param socket - socket connection
+     * @throws IOException
+     */
     public ModelProxy(Socket socket) throws IOException {
         this.socket = socket;
         out = new PrintStream(socket.getOutputStream(),true);
         in = new Scanner(socket.getInputStream());
     }
 
+    /**
+     * sets the listener.
+     * @param modelListener - listener to set.
+     */
     public void setModelListener(ModelListener modelListener){
         this.modelListener = modelListener;
         new ReaderThread().start();
@@ -29,7 +41,7 @@ public class ModelProxy implements ViewListener{
      * @throws IOException
      */
     public void join(String name)throws IOException{
-        out.printf("join %s\n",name);
+        out.printf("join %s\n", name);
     }
 
     /**
@@ -56,16 +68,27 @@ public class ModelProxy implements ViewListener{
      */
     public void quit()throws IOException{
         out.printf("quit\n");
-        socket.close();
     }
 
+    /**
+     * used if the user closes the game. closes socket connection, and exits program.
+     * @throws IOException
+     */
+    public void exit() throws IOException{
+        socket.close();
+        System.exit(0);
+    }
+
+    /**
+     * close the socket of the game if this player has exited.
+     * @throws IOException
+     */
     private class ReaderThread extends Thread{
         int id;
         public void run(){
            try{
                while(in.hasNextLine()){
                    String msg = in.nextLine();
-                   System.out.println(msg);
                    Scanner s = new Scanner(msg);
                    String op = s.next();
                    switch(op){

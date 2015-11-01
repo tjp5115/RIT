@@ -40,8 +40,7 @@ import java.io.IOException;
  * @author  Alan Kaminsky
  * @version 07-Oct-2015
  */
-public class NimUI implements ModelListener
-{
+public class NimUI implements ModelListener{
 
 // Interface for a listener for HeapPanel events.
 
@@ -241,18 +240,18 @@ public class NimUI implements ModelListener
         newGameButton = new JButton ("New Game");
         newGameButton.setAlignmentX (0.5f);
         newGameButton.setFocusable(false);
+        newGameButton.setEnabled(false);
         fieldPanel.add(newGameButton);
 
         frame.pack();
         frame.setVisible(true);
-
+        //listener for closing the window
         frame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 stop();
-                System.exit(0);
             }
         });
-
+        // listener for the new game button
         newGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -261,11 +260,11 @@ public class NimUI implements ModelListener
         });
 
 
+        initBoard();
 
     }
 
 // Exported operations.
-
     public synchronized void setViewListener(ViewListener viewListener){
         this.viewListener = viewListener;
     }
@@ -296,6 +295,25 @@ public class NimUI implements ModelListener
     }
 
     /**
+     * initiates the board to default statte.
+     */
+    private void initBoard(){
+        int height = 3;
+        HeapListener hl = new NimUI.HeapListener(){
+            @Override
+            public void removeObjects(int id, int numRemoved) {
+                take(id, numRemoved);
+            }
+        };
+        for(int i = 0; i<heapPanel.length;++i){
+            heapPanel[i].setEnabled(false);
+            heapPanel[i].setCount(height++);
+            heapPanel[i].setListener(hl);
+        }
+
+    }
+
+    /**
      * Sent to a client when a game session has been joined
      * @param id - id of the player
      * @throws IOException
@@ -311,7 +329,10 @@ public class NimUI implements ModelListener
      * @throws IOException
      */
     public void name(int id, String name)throws IOException{
-        if (!isMe(id)) theirName = name;
+        if (!isMe(id)) {
+            theirName = name;
+            newGameButton.setEnabled(true);
+        }
     }
 
     /**
@@ -321,7 +342,6 @@ public class NimUI implements ModelListener
      * @throws IOException
      */
     public void score(int id, int score)throws IOException{
-        System.out.println(id+" "+score);
         onSwingThreadDo (new Runnable() {
             public void run() {
                 if (isMe(id)) {
@@ -360,6 +380,7 @@ public class NimUI implements ModelListener
                 }else{
                     for(int i = 0; i<heapPanel.length;++i)heapPanel[i].setEnabled(false);
                 }
+                whoWonField.setText("");
             }
         });
     }
@@ -382,18 +403,18 @@ public class NimUI implements ModelListener
     }
 
     /**
-     *
+     * user has initiated the exit. tell the proxy to close socket and exit
      * @throws IOException
      */
     public void quit()throws IOException{
-        onSwingThreadDo (new Runnable() {
-            public void run() {
-                System.exit(0);
-            }
-        });
+        viewListener.exit();
     }
 
 
+    /**
+     * notifies user that a game has been joined.
+     * @param name - name of the user.
+     */
     public void join(String name){
         try {
             viewListener.join(name);
@@ -402,22 +423,50 @@ public class NimUI implements ModelListener
         }
     }
 
-// Hidden operations.
-    private boolean isMe(int id){
-        return this.myId == id;
-    }
-    private void setId(int id){
-        this.myId = id;
-    }
-    private void stop(){
-        try{
-            viewListener.quit();
-            System.exit(0);
+    /**
+     * Sends the message that the player has made a move on the board.
+     * @param id - id of the panel clicked.
+     * @param numRemoved - number of pieces to remove.
+     */
+    public void take(int id, int numRemoved){
+        try {
+            viewListener.take(id,numRemoved);
         }catch(IOException ioe){
             ioError();
         }
     }
 
+// Hidden operations.
+    /**
+     * @param id - id to evaluate
+     * @return bool - if the id is the current users or not.
+     */
+    private boolean isMe(int id){
+        return this.myId == id;
+    }
+
+    /**
+     * sets the ID of the user
+     * @param id - id to set the current user as.
+     */
+    private void setId(int id){
+        this.myId = id;
+    }
+
+    /**
+     * sends the stop message to the proxy.
+     */
+    private void stop(){
+        try{
+            viewListener.quit();
+        }catch(IOException ioe){
+            ioError();
+        }
+    }
+
+    /**
+     * lets the proxy know that a newGame has been initiated by the user.
+     */
     private void newGame() {
         try {
             viewListener.newGame();
@@ -445,12 +494,16 @@ public class NimUI implements ModelListener
             System.exit(1);
         }
     }
+
+    /**
+     * Error Message comunicating to the server.
+     */
     private void ioError(){
         JOptionPane.showMessageDialog(frame
                 ,"IO error when sending message to server"
                 ,"IO Error"
                 ,JOptionPane.ERROR_MESSAGE);
-        System.exit (0);
+        System.exit (1);
     }
 
 }
