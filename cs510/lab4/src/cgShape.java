@@ -228,8 +228,6 @@ public class cgShape extends simpleShape
         float segments = 1f / heightDivisions;
         float radiusInc =  radius / heightDivisions;
         radius = radiusInc;
-        ArrayList<Quadrilateral> quad = new ArrayList<Quadrilateral>();
-        System.out.println("HeightDiv = "+heightDivisions);
         Quadrilateral q;
         Point [][] circle = new Point[heightDivisions][];
         for (int i = 0; i < heightDivisions;i++ ) {
@@ -288,27 +286,7 @@ public class cgShape extends simpleShape
         p2 = circle[k][i-1];
         addTriangle(0f,-0.5f,0f,p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
 
-        /*
-        float len = 1.0f / heightDivisions;
-        float v;
-        Quadrilateral q;
-        Point uv,s1;
-        for(int r = 0; r < radialDivisions;++r){
-            s1 = p1;
-            v = len;
-            for (int c = 0; c < heightDivisions-1;++c) {
-                q = new Quadrilateral();
-                uv = new Point(p1.x, (1 - v) * p1.y + v * p3.y, p1.z);
-                q.p1 = s1;
-                q.p2 = new Point(p2.x,s1.y,p2.z);
-                q.p3 = new Point(p3.x,uv.y,p3.z);
-                q.p4 = new Point(p4.x,uv.y,p4.z);
-                q.draw();
-                s1 = new Point(q.p3.x,q.p3.y,p3.z);
-                v += len;
-            }
-        }
-        */
+
     }
 
     ///
@@ -322,18 +300,63 @@ public class cgShape extends simpleShape
     //
     // Can only use calls to addTriangle
     ///
-    public void makeSphere (float radius, int slices, int stacks)
-    {
-	// IF USING RECURSIVE SUBDIVISION, MODIFY THIS TO USE
-	// A MINIMUM OF 1 AND A MAXIMUM OF 5 FOR 'slices'
+    public void makeSphere (float radius, int slices, int stacks) {
+        // IF USING RECURSIVE SUBDIVISION, MODIFY THIS TO USE
+        // A MINIMUM OF 1 AND A MAXIMUM OF 5 FOR 'slices'
 
-        if( slices < 3 )
+        if (slices < 3)
             slices = 3;
 
-        if( stacks < 3 )
+        if (stacks < 3)
             stacks = 3;
 
         // YOUR IMPLEMENTATION HERE
+        float originalRad = radius;
+        float pi = 3.14159265359f;
+        double theta = 2.0f*pi / slices;
+        double thetaInc = theta;
+        double phiInc = pi / stacks;
+        double phi = 0;
+        float x, z, y;
+        System.out.println("radius="+radius+" stacks="+stacks+"  slices="+slices);
+        float radiusInc =  radius / stacks;
+        Quadrilateral q;
+        Point [][] circle = new Point[stacks+1][slices];
+        for (int i = 0; i < stacks+1;i++ ) {
+            System.out.println("\nradius="+radius + " phi="+phi);
+            int k = 0;
+            theta = thetaInc;
+            for (; k < slices; ++k) {
+                x = (float) (radius * Math.cos(theta) * Math.sin(phi));
+                y = (float) (radius * Math.sin(theta) * Math.sin(phi));
+                z = (float) (radius * Math.cos(phi));
+                circle[i][k] = new Point(x, y, z);
+                System.out.print(circle[i][k]);
+                System.out.println(" theta="+theta);
+                theta += thetaInc;
+                if (k > 0 && i > 0){
+                    //polygon segments.
+                    q = new Quadrilateral();
+                    q.p1 = circle[i-1][k-1];
+                    q.p2 = circle[i-1][k];
+                    q.p3 = circle[i][k-1];
+                    q.p4 = circle[i][k];
+                    q.draw();
+                }
+            }
+            if (i > 0){
+                //polygon segments.
+                q = new Quadrilateral();
+                q.p1 = circle[i-1][k-1];
+                q.p2 = circle[i-1][0];
+                q.p3 = circle[i][k-1];
+                q.p4 = circle[i][0];
+                q.draw();
+            }
+            radius += radiusInc;
+            if(radius >= originalRad) radius = originalRad;
+            phi += phiInc;
+        }
     }
 
 
