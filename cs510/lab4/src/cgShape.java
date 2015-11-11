@@ -6,7 +6,7 @@
 //  Students are to supply their implementations for the functions in
 //  this file using the function "addTriangle()" to do the tessellation.
 //
-//  Contributor:  YOUR_NAME_HERE
+//  Contributor:  Tyler Paulsen
 //
 
 import java.awt.*;
@@ -42,74 +42,84 @@ public class cgShape extends simpleShape
             subdivisions = 1;
 
         // YOUR IMPLEMENTATION HERE
-        ArrayList<Quadrilateral> tess = new ArrayList<Quadrilateral>();
+        // default point values for th top left corner
         Point p1 = new Point(-.5f,.5f,.5f);
         Point p2 = new Point(.5f,.5f,.5f);
         Point p3 = new Point(-.5f,-.5f,.5f);
         Point p4 = new Point(.5f,-.5f,.5f);
+
+
         float len = 1.0f / subdivisions;
         float v = len;
         float u = len;
+
         Point qU,rU,uv;
-        Quadrilateral q2,q3,q4,q5,q6,q1 = null;
+        // an object for each side of the cube to make .
+
+        Quadrilateral q2,q3,q4,q5,q6,q1;
+        q1 = new Quadrilateral();
+        q2 = new Quadrilateral();
+        q3 = new Quadrilateral();
+        q4 = new Quadrilateral();
+        q5 = new Quadrilateral();
+        q6 = new Quadrilateral();
+        // the top left position to base calculations off of.
         Point s1 = new Point(p1.x,p1.y,p1.z);
         for(int r = 0; r < subdivisions;++r){
             for (int c = 0; c < subdivisions; ++c){
+                // calculate a new square from the corner (top left) of each side
                 qU = new Point( (1-u)*p1.x+u*p2.x, (1-u)*p1.y+u*p2.y, p1.z);
                 rU = new Point( (1-u)*p3.x+u*p4.x, (1-u)*p3.y+u*p4.y, p1.z);
                 uv = new Point( (1-v)*qU.x + v*rU.x, (1-v)*qU.y + v*rU.y, p1.z);
-                System.out.println(v);
-                q1 = new Quadrilateral();
-                q2 = new Quadrilateral();
-                q3 = new Quadrilateral();
-                q4 = new Quadrilateral();
-                q5 = new Quadrilateral();
-                q6 = new Quadrilateral();
+
+                //notes:
+                // s1.z is the constant for each side.
 
                 q1.p1 = s1;
-                q2.p1 = new Point(s1.y,s1.x,-1*s1.z);
-                q3.p1 = new Point(s1.z,s1.x,s1.y);
-                q4.p1 = new Point(-1*s1.z,s1.y,s1.x);
-                q5.p1 = new Point(s1.x,-1*s1.z,s1.y);
-                q6.p1 = new Point(s1.y,s1.z,s1.x);
-
-                q1.p2 = new Point(uv.x,s1.y,s1.z);
-                q2.p2 = new Point(s1.y,uv.x,-1*s1.z);
-                q3.p2 = new Point(s1.z,uv.x,s1.y);
-                q4.p2 = new Point(-1*s1.z,s1.y,uv.x);
-                q5.p2 = new Point(uv.x,-1*s1.z,s1.y);
-                q6.p2 = new Point(s1.y,s1.z,uv.x);
-
-                q1.p3 = new Point(s1.x,uv.y,s1.z);
-                q2.p3 = new Point(uv.y,s1.x,-1*s1.z);
-                q3.p3 = new Point(s1.z,s1.x,uv.y);
-                q4.p3 = new Point(-1*s1.z,uv.y,s1.x);
-                q5.p3 = new Point(s1.x,-1*s1.z,uv.y);
-                q6.p3 = new Point(uv.y,s1.z,s1.x);
-
                 q1.p4 = uv;
+                q1.p2 = new Point(uv.x,s1.y,s1.z);
+                q1.p3 = new Point(s1.x,uv.y,s1.z);
+
+                q2.p1 = new Point(s1.y,s1.x,-1*s1.z);
+                q2.p2 = new Point(s1.y,uv.x,-1*s1.z);
                 q2.p4 = new Point(uv.y,uv.x,-1*s1.z);
+                q2.p3 = new Point(uv.y,s1.x,-1*s1.z);
+
+                q3.p1 = new Point(s1.z,s1.x,s1.y);
+                q3.p2 = new Point(s1.z,uv.x,s1.y);
+                q3.p3 = new Point(s1.z,s1.x,uv.y);
                 q3.p4 = new Point(s1.z,uv.x,uv.y);
+
+                q4.p1 = new Point(-1*s1.z,s1.y,s1.x);
+                q4.p2 = new Point(-1*s1.z,s1.y,uv.x);
+                q4.p3 = new Point(-1*s1.z,uv.y,s1.x);
                 q4.p4 = new Point(-1*s1.z,uv.y,uv.x);
+
+                q5.p1 = new Point(s1.x,-1*s1.z,s1.y);
+                q5.p2 = new Point(uv.x,-1*s1.z,s1.y);
+                q5.p3 = new Point(s1.x,-1*s1.z,uv.y);
                 q5.p4 = new Point(uv.x,-1*s1.z,uv.y);
+
+                q6.p1 = new Point(s1.y,s1.z,s1.x);
+                q6.p2 = new Point(s1.y,s1.z,uv.x);
+                q6.p3 = new Point(uv.y,s1.z,s1.x);
                 q6.p4 = new Point(uv.y,s1.z,uv.x);
 
-                tess.add(q1);
-                tess.add(q2);
-                tess.add(q3);
-                tess.add(q4);
-                tess.add(q5);
-                tess.add(q6);
+                q1.draw();
+                q2.draw();
+                q3.draw();
+                q4.draw();
+                q5.draw();
+                q6.draw();
+                // update the to the next column position.
                 s1 = new Point(q1.p2.x,q1.p2.y,s1.z);
                 u += len;
             }
             u = len;
             v += len;
+            //move to the next row
             s1 = new Point(p1.x,q1.p3.y,p1.z);
         }
-            for(Quadrilateral quad: tess){
-                quad.draw();
-            }
     }
 
     ///
@@ -138,12 +148,15 @@ public class cgShape extends simpleShape
         Point []radPoint1 = new Point[radialDivisions];
         Point []radPoint2 = new Point[radialDivisions];
         Quadrilateral []quad = new Quadrilateral[radialDivisions];
-
+        // initial x and z position.
         float x = (float)(radius*Math.cos(0));
         float z = (float)(radius*Math.sin(0));
         radPoint1[0] = new Point(x, 0.5f ,z);
         radPoint2[0] = new Point(x, -0.5f ,z);
+        // temp point holders.
         Point p1,p2,p3,p4;
+
+        // draw the top.
         for(int i = 1; i < radialDivisions;++i){
             x = (float)(radius*Math.cos(theta));
             z = (float)(radius*Math.sin(theta));
@@ -178,6 +191,8 @@ public class cgShape extends simpleShape
         float v;
         Quadrilateral q;
         Point uv,s1;
+
+        // draw all the squares.
         for(int r = 0; r < radialDivisions;++r){
             p1 = quad[r].p1;
             p2 = quad[r].p2;
@@ -230,6 +245,8 @@ public class cgShape extends simpleShape
         radius = radiusInc;
         Quadrilateral q;
         Point [][] circle = new Point[heightDivisions][];
+
+        // draw the outline of the triangle.
         for (int i = 0; i < heightDivisions;i++ ) {
             y -= segments;
             circle[i] = new Point[radialDivisions];
@@ -273,11 +290,9 @@ public class cgShape extends simpleShape
         }
 
         int k = circle.length-1;
-        System.out.println("k: "+k);
         int i = 1;
+        // draw the last row.
         for (; i < radialDivisions; ++i){
-            System.out.print(circle[k][i - 1]);
-            System.out.println(circle[k][i]);
             p2 = circle[k][i-1];
             p1 = circle[k][i];
             addTriangle(0f,-0.5f,0f,p1.x,p1.y,p1.z,p2.x,p2.y,p2.z);
@@ -318,12 +333,10 @@ public class cgShape extends simpleShape
         double phiInc = pi / stacks;
         double phi = 0;
         float x, z, y;
-        System.out.println("radius="+radius+" stacks="+stacks+"  slices="+slices);
         float radiusInc =  radius / stacks;
         Quadrilateral q;
         Point [][] circle = new Point[stacks+1][slices];
         for (int i = 0; i < stacks+1;i++ ) {
-            System.out.println("\nradius="+radius + " phi="+phi);
             int k = 0;
             theta = thetaInc;
             for (; k < slices; ++k) {
@@ -331,8 +344,6 @@ public class cgShape extends simpleShape
                 y = (float) (radius * Math.sin(theta) * Math.sin(phi));
                 z = (float) (radius * Math.cos(phi));
                 circle[i][k] = new Point(x, y, z);
-                System.out.print(circle[i][k]);
-                System.out.println(" theta="+theta);
                 theta += thetaInc;
                 if (k > 0 && i > 0){
                     //polygon segments.
@@ -372,12 +383,6 @@ public class cgShape extends simpleShape
             this(new Point(),new Point(),new Point(), new Point());
         }
         public void draw(){
-            /*
-            System.out.print("p1: "+p1);
-            System.out.print(" p2: "+p2);
-            System.out.print(" p3: "+p3);
-            System.out.println(" p4: "+p4);
-            */
            addTriangle(
                    p1.x, p1.y, p1.z,
                    p3.x, p3.y, p3.z,
@@ -389,5 +394,20 @@ public class cgShape extends simpleShape
         }
 
 
+    }
+
+    public class Point {
+        float x,y,z;
+        Point(float x, float y, float z){
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+        Point(){
+            this(0,0,0);
+        }
+        public String toString(){
+            return "("+x+","+y+","+z+")";
+        }
     }
 }

@@ -260,7 +260,18 @@ public class NimUI implements ModelListener{
         });
 
 
-        initBoard();
+        int height = 3;
+        HeapListener hl = new NimUI.HeapListener(){
+            @Override
+            public void removeObjects(int id, int numRemoved) {
+                take(id, numRemoved);
+            }
+        };
+        for(int i = 0; i<heapPanel.length;++i){
+            heapPanel[i].setEnabled(false);
+            heapPanel[i].setCount(height++);
+            heapPanel[i].setListener(hl);
+        }
 
     }
 
@@ -295,31 +306,12 @@ public class NimUI implements ModelListener{
     }
 
     /**
-     * initiates the board to default statte.
-     */
-    private void initBoard(){
-        int height = 3;
-        HeapListener hl = new NimUI.HeapListener(){
-            @Override
-            public void removeObjects(int id, int numRemoved) {
-                take(id, numRemoved);
-            }
-        };
-        for(int i = 0; i<heapPanel.length;++i){
-            heapPanel[i].setEnabled(false);
-            heapPanel[i].setCount(height++);
-            heapPanel[i].setListener(hl);
-        }
-
-    }
-
-    /**
      * Sent to a client when a game session has been joined
      * @param id - id of the player
      * @throws IOException
      */
-    public void id(int id)throws IOException{
-        setId(id);
+    public synchronized void id(int id)throws IOException{
+        this.myId = id;
     }
 
     /**
@@ -328,10 +320,15 @@ public class NimUI implements ModelListener{
      * @param name - name of the player
      * @throws IOException
      */
-    public void name(int id, String name)throws IOException{
-        if (!isMe(id)) {
+    public synchronized void name(int id, String name)throws IOException{
+        if (myId == id) {
             theirName = name;
-            newGameButton.setEnabled(true);
+            onSwingThreadDo(new Runnable() {
+                @Override
+                public void run() {
+                    newGameButton.setEnabled(true);
+                }
+            });
         }
     }
 
@@ -341,10 +338,10 @@ public class NimUI implements ModelListener{
      * @param score - score of the player
      * @throws IOException
      */
-    public void score(int id, int score)throws IOException{
+    public synchronized void score(int id, int score)throws IOException{
         onSwingThreadDo (new Runnable() {
             public void run() {
-                if (isMe(id)) {
+                if (myId == id) {
                     myNameField.setText(myName+" = "+score);
                 }else {
                     theirNameField.setText(theirName + " = " + score);
@@ -359,7 +356,7 @@ public class NimUI implements ModelListener{
      * @param markers - number of markers in heap
      * @throws IOException
      */
-    public void heap(int heap, int markers)throws IOException{
+    public synchronized void heap(int heap, int markers)throws IOException{
         onSwingThreadDo (new Runnable() {
             public void run() {
                 heapPanel[heap].setCount(markers);
@@ -369,13 +366,13 @@ public class NimUI implements ModelListener{
 
     /**
      * what clients turn it is.
-     * @param i - id of the client
+     * @param id - id of the client
      * @throws IOException
      */
-    public void turn(int i)throws IOException{
+    public synchronized void turn(int id)throws IOException{
         onSwingThreadDo (new Runnable() {
             public void run() {
-                if(isMe(i)){
+                if(myId == id){
                     for(int i = 0; i<heapPanel.length;++i)heapPanel[i].setEnabled(true);
                 }else{
                     for(int i = 0; i<heapPanel.length;++i)heapPanel[i].setEnabled(false);
@@ -387,16 +384,16 @@ public class NimUI implements ModelListener{
 
     /**
      * report a client win
-     * @param i - id of the client
+     * @param id - id of the client
      * @throws IOException
      */
-    public void win(int i)throws IOException{
-        onSwingThreadDo (new Runnable() {
+    public synchronized void win(int id)throws IOException{
+        onSwingThreadDo(new Runnable() {
             public void run() {
-                if(isMe(i)){
-                    whoWonField.setText(myName+" wins!");
-                }else{
-                    whoWonField.setText(theirName+" wins!");
+                if (myId == id) {
+                    whoWonField.setText(myName + " wins!");
+                } else {
+                    whoWonField.setText(theirName + " wins!");
                 }
             }
         });
@@ -406,7 +403,7 @@ public class NimUI implements ModelListener{
      * user has initiated the exit. tell the proxy to close socket and exit
      * @throws IOException
      */
-    public void quit()throws IOException{
+    public synchronized void quit()throws IOException{
         viewListener.exit();
     }
 
@@ -415,7 +412,7 @@ public class NimUI implements ModelListener{
      * notifies user that a game has been joined.
      * @param name - name of the user.
      */
-    public void join(String name){
+    public synchronized void join(String name){
         try {
             viewListener.join(name);
         }catch(IOException ioe){
@@ -428,7 +425,7 @@ public class NimUI implements ModelListener{
      * @param id - id of the panel clicked.
      * @param numRemoved - number of pieces to remove.
      */
-    public void take(int id, int numRemoved){
+    public synchronized void take(int id, int numRemoved){
         try {
             viewListener.take(id,numRemoved);
         }catch(IOException ioe){
@@ -437,26 +434,13 @@ public class NimUI implements ModelListener{
     }
 
 // Hidden operations.
-    /**
-     * @param id - id to evaluate
-     * @return bool - if the id is the current users or not.
-     */
-    private boolean isMe(int id){
-        return this.myId == id;
-    }
 
-    /**
-     * sets the ID of the user
-     * @param id - id to set the current user as.
-     */
-    private void setId(int id){
-        this.myId = id;
-    }
+
 
     /**
      * sends the stop message to the proxy.
      */
-    private void stop(){
+    private synchronized void stop(){
         try{
             viewListener.quit();
         }catch(IOException ioe){
@@ -467,7 +451,7 @@ public class NimUI implements ModelListener{
     /**
      * lets the proxy know that a newGame has been initiated by the user.
      */
-    private void newGame() {
+    private synchronized void newGame() {
         try {
             viewListener.newGame();
         } catch (IOException ioe) {
@@ -498,12 +482,18 @@ public class NimUI implements ModelListener{
     /**
      * Error Message comunicating to the server.
      */
-    private void ioError(){
-        JOptionPane.showMessageDialog(frame
-                ,"IO error when sending message to server"
-                ,"IO Error"
-                ,JOptionPane.ERROR_MESSAGE);
-        System.exit (1);
+    private synchronized void ioError(){
+        onSwingThreadDo(new Runnable() {
+            @Override
+            public void run() {
+                JOptionPane.showMessageDialog(frame
+                        , "IO error when sending message to server"
+                        , "IO Error"
+                        , JOptionPane.ERROR_MESSAGE);
+                System.exit(1);
+            }
+        });
+
     }
 
 }
