@@ -59,17 +59,20 @@ void main()
                     -s.z,  c.z,  0.0,  0.0,
                      0.0,  0.0,  1.0,  0.0,
                      0.0,  0.0,  0.0,  1.0 );
-
+    mat4 rotation = rz * ry * rx;
+    vec4 transformation = translate * rotation * scale * vPosition;
 
     //viewing transformation
-    vec3 n = normal(eye - lookat);
-    vec3 u = normal(cross(up, n));
-    vec3 v = cross(n, u);
+    vec3 n = normalize(eye - lookat);
+    vec3 u = normalize(cross(up, n));
+    vec3 v = normalize(cross(n, u));
     mat4 view = mat4( u.x, u.y, u.z, dot(-1.0*u, eye),
                       v.x, v.y, v.z, dot(-1.0*v, eye),
                       n.x, n.y, n.z, dot(-1.0*n, eye),
                       0.0, 0.0, 0.0, 1.0);
+    vec4 worldToCamera = transformation * view;
 
-    gl_Position =  projection * view * translate * rz * ry * rx * scale  * vPosition ;
+    //gl_Position =  projection * view * translate * rz * ry * rx * scale  * vPosition ;
+    gl_Position =   projection * worldToCamera;
 
 }
