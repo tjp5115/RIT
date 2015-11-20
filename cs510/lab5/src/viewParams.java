@@ -20,25 +20,20 @@ public class viewParams
     private static float b = -1.0f;
     private static float n = 0.9f;
     private static float f = 4.5f;
-
+    // orthographical projection matrix
     private float[] ortho = {
             2f/(r-l), 0f, 0f, 0f,
             0f, 2f/(t-b), 0f, 0f,
             0f, 0f, -2f/(f-n), 0f,
             -1f*(r+l)/(r-l), -1f*(t+b)/(t-b), -1f*(f+n)/(f-n), 1f
     };
+    // frustum projection matrix
     private float[] frustum= {
             (2f*n)/(r-l),0f ,0f,0f,
             0f,(2f*n)/(t-b),0f,0f,
             (r+l)/(r-l),(t+b)/(t-b),-1f*(f+n)/(f-n),-1f,
             0f,0f,(-2f*f*n)/(f-n),0f
     };
-
-    //view transformations variables.
-    private float eyepoint[] = {0f, 1.3f, -.5f};
-    private float lookat[] = {0f, 1.3f, -.5f};
-    private float up[] = {0f, 1.3f, -.5f};
-
 
     ///
     // constructor
@@ -87,6 +82,8 @@ public class viewParams
     public void setUpOrtho (int program, GL2 gl2)
     {
         // Add your code here.
+
+        //set the projection matrix as the private ortho array
         int location = gl2.glGetUniformLocationARB(program,"projection");
         gl2.glUniformMatrix4fvARB(location,1,false,ortho,0);
 
@@ -108,16 +105,18 @@ public class viewParams
     public void clearTransforms( int program, GL2 gl2 )
     {
         // Add your code here.
+
+        //default angles.
         float angles[] = {1f, 1f, 1f};
         int location = gl2.glGetUniformLocationARB(program,"theta");
         gl2.glUniform3fv(location,1,angles,0);
 
-        //set scale
+        //default scale
         float scale[] = {1f, 1f, 1f};
         location = gl2.glGetUniformLocationARB(program,"scale");
         gl2.glUniform3fv(location,1,scale,0);
 
-        //set scale
+        //default translate
         float translate[] = {0f, 0f, 0f };
         location = gl2.glGetUniformLocationARB(program,"translate");
         gl2.glUniform3fv(location,1,translate,0);
@@ -185,17 +184,17 @@ public class viewParams
     {
         // Add your code here.
 
-        // set eye vec
+        // default eye vector
         float eye[] = {0f,0f,0f};
         int location = gl2.glGetUniformLocationARB(program,"eye");
         gl2.glUniform3fv(location,1,eye,0);
 
-        //set lookat vec
+        //default lookat vector
         float lookat[] = {0f,0f,-1f};
         location = gl2.glGetUniformLocationARB(program,"lookat");
         gl2.glUniform3fv(location,1,lookat,0);
 
-        //set up vec
+        //default up vector
         float up [] = {0f,1f,0f};
         location = gl2.glGetUniformLocationARB(program,"up");
         gl2.glUniform3fv(location,1,up,0);
@@ -229,27 +228,22 @@ public class viewParams
         float upX, float upY, float upZ )
     {
         // Add your code here.
-        // set eye vec
+
+        // set eye vector
         float eye[] = {eyeX,eyeY,eyeZ};
         int location = gl2.glGetUniformLocationARB(program,"eye");
         gl2.glUniform3fv(location,1,eye,0);
-        //System.out.println(Arrays.toString(eye));
-        //System.out.println("Location:" + location);
 
 
-        //set lookat vec
+        //set lookat vector
         float lookat[] = {lookatX,lookatY,lookatZ};
         location = gl2.glGetUniformLocationARB(program,"lookat");
         gl2.glUniform3fv(location,1,lookat,0);
-        //System.out.println(Arrays.toString(lookat));
-        //System.out.println("Location:" + location);
 
-        //set up vec
+        //set up vector
         float up [] = {upX,upY,upZ};
         location = gl2.glGetUniformLocationARB(program,"up");
         gl2.glUniform3fv(location,1,up,0);
-        //System.out.println(Arrays.toString(up));
-        //System.out.println("Location:" + location);
     }
 
 }

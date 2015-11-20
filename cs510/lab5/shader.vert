@@ -8,6 +8,8 @@
 #version 120
 
 attribute vec4 vPosition;
+
+// projection matrix
 uniform mat4 projection;
 
 // tansformation vec
@@ -15,30 +17,23 @@ uniform vec3 theta;
 uniform vec3 scale;
 uniform vec3 translate;
 
-//camera vecs
+//camera vectorss
 uniform vec3 eye;
 uniform vec3 lookat;
 uniform vec3 up;
 
 void main()
 {
-    // Compute the sines and cosines of each rotation
-    // about each axis
-    vec3 c;
-    c.x = cos( radians( theta.x ) );
-    c.y = cos( radians( theta.y ) );
-    c.z = cos( radians( theta.z ) );
+    // rotation vectors for each axis
+    vec3 c = cos( radians( theta ) );
+    vec3 s = sin( radians( theta ) );
 
-    vec3 s;
-    s.x = sin( radians( theta.x ) );
-    s.y = sin( radians( theta.y ) );
-    s.z = sin( radians( theta.z ) );
-
-    mat4 translate = mat4 ( 1.0,  0.0,  0.0,  0.0,
-                            0.0,  1.0,  0.0,  0.0,
-                            0.0,  0.0,  1.0,  0.0,
-                            translate.x, translate.y, translate.x, 1.0);
-
+    // translate matrix
+    mat4 translate = mat4 ( 1.0,  0.0,  0.0,   0.0,
+                            0.0,  1.0,  0.0,   0.0,
+                            0.0,  0.0,  1.0,   0.0,
+                            translate.x, translate.y, translate.z, 1.0);
+    // scaling matrix
     mat4 scale = mat4 ( scale.x,  0.0,  0.0,  0.0,
                         0.0,  scale.y,  0.0,  0.0,
                         0.0,  0.0,  scale.z,  0.0,
@@ -59,7 +54,9 @@ void main()
                     -s.z,  c.z,  0.0,  0.0,
                      0.0,  0.0,  1.0,  0.0,
                      0.0,  0.0,  0.0,  1.0 );
-    mat4 rotation = rz * ry * rx;
+    mat4 rotation = rx * ry * rz;
+
+    // transform the matrix (scaling, rotation, and tranlation)
     vec4 transformation = translate * rotation * scale * vPosition;
 
     //viewing transformation
@@ -70,9 +67,10 @@ void main()
                       v.x, v.y, v.z, dot(-1.0*v, eye),
                       n.x, n.y, n.z, dot(-1.0*n, eye),
                       0.0, 0.0, 0.0, 1.0);
+    // put us in camera cords
     vec4 worldToCamera = transformation * view;
 
-    //gl_Position =  projection * view * translate * rz * ry * rx * scale  * vPosition ;
+    //put us in clip space
     gl_Position =   projection * worldToCamera;
 
 }
