@@ -123,44 +123,35 @@ public class ModelProxy implements ViewListener{
                    switch(b){
                        case 'I':
                            id = in.readByte();
-                           System.out.println("id ");
-                           System.out.println(id);
+                           System.out.println("id " + id);
                            modelListener.id(id);
                            break;
                        case 'N':
                            id = in.readByte();
                            String name = in.readUTF();
-                           System.out.println("name ");
-                           System.out.println(id);
-                           System.out.println(name);
+                           System.out.println("name "+ id + " " + name);
                            modelListener.name(id, name);
                            break;
                        case 'S':
                            id = in.readByte();
                            int score = in.readByte();
-                           System.out.println("score ");
-                           System.out.println(id);
-                           System.out.println(score);
+                           System.out.println("score "+ id + " " + score);
                            modelListener.score(id, score);
                            break;
                        case 'H':
                            int heap = in.readByte();
                            int number = in.readByte();
-                           System.out.println("Heap");
-                           System.out.println(heap);
-                           System.out.println(number);
+                           System.out.println("heap "+ heap+" " + number);
                            modelListener.heap(heap, number);
                            break;
                        case 'T':
                            id = in.readByte();
-                           System.out.println("turn ");
-                           System.out.println(id);
+                           System.out.println("turn " + id);
                            modelListener.turn(id);
                            break;
                        case 'W':
                            id = in.readByte();
-                           System.out.println("win");
-                           System.out.println(id);
+                           System.out.println("win "+ id);
                            modelListener.win(id);
                            break;
                        case 'Q':

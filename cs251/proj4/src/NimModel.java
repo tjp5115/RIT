@@ -11,7 +11,9 @@ public class NimModel implements ViewListener{
     private int turn = 0;
     private int []score = new int[2];
     NimModel(){
-
+        board[0] = 3;
+        board[1] = 4;
+        board[2] = 5;
     }
     public synchronized void addModelListener(ModelListener modelListener, String name){
         try {
@@ -23,13 +25,17 @@ public class NimModel implements ViewListener{
             names[id] = name;
             listeners.add(modelListener);
             for(int i = 0; i < listeners.size();++i){
-                modelListener.name(i,names[i]);
-                if (listeners.size() == 2){
-                    System.out.println("Two people in game");
+                for (int k = 0; k < listeners.size();k++) {
+                    listeners.get(i).name(k, names[k]);
+                    listeners.get(i).score(k,0);
+                }
+                if (listeners.size() == 2 ){
                     listeners.get(i).turn(0);
                 }
             }
-        }catch(Exception e){}
+        }catch(Exception e){
+            System.out.println(e.toString());
+        }
     }
 
     /**
@@ -68,9 +74,10 @@ public class NimModel implements ViewListener{
         }
         if (winner){
             turn--;
+            score[turn%2]++;
             for (ModelListener listener: listeners){
                 listener.win(turn%2);
-                listener.score(turn%2,++score[turn%2]);
+                listener.score(turn%2,score[turn%2]);
             }
         }
     }
