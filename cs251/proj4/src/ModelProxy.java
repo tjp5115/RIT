@@ -93,6 +93,7 @@ public class ModelProxy implements ViewListener{
         out.close();
         byte[] payload = baos.toByteArray();
         mailbox.send(new DatagramPacket(payload,payload.length,destination));
+        exit();
     }
 
     /**

@@ -6,7 +6,7 @@ import java.io.IOException;
 public class SessionManager implements ViewListener{
 
     NimModel model = null;
-
+    ViewProxy gameOwnerProxy = null;
 
     /**
      * join a game session
@@ -19,10 +19,12 @@ public class SessionManager implements ViewListener{
     public synchronized void join(ViewProxy proxy, String name) throws IOException {
        if (model == null){
            model = new NimModel();
-           model.addModelListener(proxy,name);
-           proxy.setViewListener(model);
+           model.addModelListener(proxy, name);
+           gameOwnerProxy = proxy;
        }else{
-           model.addModelListener(proxy,name);
+           model.addModelListener(proxy, name);
+
+           gameOwnerProxy.setViewListener(model);
            proxy.setViewListener(model);
            model = null;
        }
@@ -57,7 +59,8 @@ public class SessionManager implements ViewListener{
      */
     @Override
     public void quit() throws IOException {
-
+        gameOwnerProxy = null;
+        model = null;
     }
 
     /**

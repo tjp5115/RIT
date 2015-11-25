@@ -12,15 +12,17 @@ public class ViewProxy implements ModelListener{
     private DatagramSocket mailbox;
     private SocketAddress clientAddress;
     private ViewListener viewListener;
+    private MailboxManager mailboxManager;
 
     /**
      * constructor for viewproxy
      * @param mailbox - server mailbox
      * @param clientAddress client mailbox address
      */
-    public ViewProxy(DatagramSocket mailbox, SocketAddress clientAddress){
+    public ViewProxy(DatagramSocket mailbox, SocketAddress clientAddress, MailboxManager mailboxManager){
         this.mailbox = mailbox;
         this.clientAddress = clientAddress;
+        this.mailboxManager = mailboxManager;
     }
 
     /**
@@ -156,6 +158,7 @@ public class ViewProxy implements ModelListener{
         byte[] payload = baos.toByteArray();
         System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
+        mailboxManager.removeClient(clientAddress);
     }
 
 
@@ -192,6 +195,7 @@ public class ViewProxy implements ModelListener{
                 viewListener.quit();
                 break;
             default:
+                discard = true;
                 System.err.println("Bad Message");
                 break;
 

@@ -21,6 +21,10 @@ public class MailboxManager {
     public MailboxManager(DatagramSocket mailbox){
         this.mailbox = mailbox;
     }
+    public void removeClient(SocketAddress clientAddress){
+        System.out.println("Removing Client " + clientAddress.toString());
+        proxyMap.remove(clientAddress);
+    }
 
 
     public void receiveMessage() throws IOException{
@@ -29,12 +33,12 @@ public class MailboxManager {
         SocketAddress clientAddress = packet.getSocketAddress();
         ViewProxy viewproxy = proxyMap.get(clientAddress);
         if (viewproxy == null){
-            viewproxy = new ViewProxy(mailbox, clientAddress);
+            viewproxy = new ViewProxy(mailbox, clientAddress, this);
             viewproxy.setViewListener(sessionManager);
             proxyMap.put(clientAddress,viewproxy);
         }
         if(viewproxy.process(packet)){
-            proxyMap.remove(clientAddress);
+            removeClient(clientAddress);
         }
 
     }
