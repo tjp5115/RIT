@@ -5,7 +5,8 @@ import java.net.SocketAddress;
 import java.util.HashMap;
 
 /**
- * Created by Crystal on 11/19/2015.
+ * Created by Tyler on 11/19/2015.
+ * Manages the datagrams to the server. Pushes the datagram to the correct model/proxy combination.
  */
 public class MailboxManager {
     private DatagramSocket mailbox;
@@ -22,11 +23,14 @@ public class MailboxManager {
         this.mailbox = mailbox;
     }
     public void removeClient(SocketAddress clientAddress){
-        System.out.println("Removing Client " + clientAddress.toString());
+        //System.out.println("Removing Client " + clientAddress.toString());
         proxyMap.remove(clientAddress);
     }
 
-
+    /**
+     * @exception IOException
+     * Receives a message(datagram). Used by the main program in an inifinite loop to wait for a message to come.
+     */
     public void receiveMessage() throws IOException{
         DatagramPacket packet = new DatagramPacket(payload, payload.length);
         mailbox.receive(packet);

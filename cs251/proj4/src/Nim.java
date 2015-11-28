@@ -27,7 +27,7 @@ public class Nim {
             proxy.setModelListener(view);
             view.join(player);
         }catch(Exception e){
-            System.out.println(e.toString());
+            System.err.println(e.toString());
             usage();
         }
 
@@ -37,7 +37,7 @@ public class Nim {
      * usage method to inform user of incorrect parameters.
      */
     public static void usage(){
-        System.out.println("Usage: java Nim <serverhost> <serverport> <clienthost> <clientport> <playername>");
+        System.err.println("Usage: java Nim <serverhost> <serverport> <clienthost> <clientport> <playername>");
         System.exit(1);
     }
 }

@@ -44,10 +44,10 @@ public class NimUI implements ModelListener{
 
 // Interface for a listener for HeapPanel events.
 
-    private static interface HeapListener
+    private interface HeapListener
     {
         // Report that markers are to be removed from a heap.
-        public void removeObjects
+        void removeObjects
         (int id,          // Heap panel ID
          int numRemoved); // Number of markers to be removed
     }

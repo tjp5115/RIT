@@ -1,6 +1,3 @@
-/**
- * Created by Tyler Paulsen 10/14/2015.
- */
 import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -9,6 +6,7 @@ import java.net.SocketAddress;
 import java.util.Scanner;
 
 /**
+ * Created by Tyler Paulsen 10/14/2015.
  * NimModel proxy to communicate direct communication between the UI and the Server.
  */
 public class ModelProxy implements ViewListener{
@@ -124,39 +122,39 @@ public class ModelProxy implements ViewListener{
                    switch(b){
                        case 'I':
                            id = in.readByte();
-                           System.out.println("id " + id);
+                           //System.out.println("id " + id);
                            modelListener.id(id);
                            break;
                        case 'N':
                            id = in.readByte();
                            String name = in.readUTF();
-                           System.out.println("name "+ id + " " + name);
+                           //System.out.println("name "+ id + " " + name);
                            modelListener.name(id, name);
                            break;
                        case 'S':
                            id = in.readByte();
                            int score = in.readByte();
-                           System.out.println("score "+ id + " " + score);
+                           //System.out.println("score "+ id + " " + score);
                            modelListener.score(id, score);
                            break;
                        case 'H':
                            int heap = in.readByte();
                            int number = in.readByte();
-                           System.out.println("heap "+ heap+" " + number);
+                           //System.out.println("heap "+ heap+" " + number);
                            modelListener.heap(heap, number);
                            break;
                        case 'T':
                            id = in.readByte();
-                           System.out.println("turn " + id);
+                           //System.out.println("turn " + id);
                            modelListener.turn(id);
                            break;
                        case 'W':
                            id = in.readByte();
-                           System.out.println("win "+ id);
+                           //System.out.println("win "+ id);
                            modelListener.win(id);
                            break;
                        case 'Q':
-                           System.out.println("quit");
+                           //System.out.println("quit");
                            mailbox.close();
                            modelListener.quit();
                            break;

@@ -1,7 +1,14 @@
 import java.io.IOException;
 
 /**
- * Created by Crystal on 11/19/2015.
+ * Created by Tyler on 11/19/2015.
+ *
+ * Session manager for the game (from writeup https://www.cs.rit.edu/~ark/251/p4/p4.shtml):
+ *
+ * If the server has no sessions, or if every session has two players, the server creates a new session and adds the
+ * client to that session; the client then waits to start playing until another client joins the session. Otherwise,
+ * the server has a session with one waiting client, and the server adds the client to that session; the two clients
+ * then start playing each other.
  */
 public class SessionManager implements ViewListener{
 

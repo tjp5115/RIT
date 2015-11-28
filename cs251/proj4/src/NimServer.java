@@ -2,7 +2,8 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
 /**
- * Created by Crystal on 11/19/2015.
+ * Created by Tyler on 11/19/2015.
+ * Main program for the server.
  */
 public class NimServer {
     public static void main(String args[]){
@@ -17,7 +18,7 @@ public class NimServer {
                manager.receiveMessage();
            }
         }catch(Exception e){
-            e.printStackTrace();
+            System.err.println(e.toString());
             usage();
         }
     }
@@ -26,6 +27,6 @@ public class NimServer {
      * usage method to inform user of incorrect parameters.
      */
     public static void usage(){
-        System.out.println("Usage: java NimServer <serverhost> <serverport>");
+        System.err.println("Usage: java NimServer <serverhost> <serverport>");
         System.exit(1);
     }}

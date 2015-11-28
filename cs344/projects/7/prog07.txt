@@ -1,0 +1,31 @@
+Tyler Paulsen
+csci-344
+11/27/15
+Programming assignment 7
+
+
+1. Does there exist a flight path from Rochester to Paris?
+yes
+
+2. Does there exist a flight path from Paris to Rochester?
+No
+
+3. Does there exist a direct flight from Berlin to Miami?
+yes
+
+4. Does there exist a one stop flight from London to Rochester?
+no
+
+5. Does there exist a two stop flight from London to Rochester?
+no
+
+6. Does there exist a three stop flight from London to Rochester?
+no
+
+7. Does there exist a four stop flight from London to Rochester?
+yes, [london, nyc, dc, denver, detroit, rochester]
+
+8. Does your flightExists query give you the longest or shortest possible path? Can you explain how to make it do it
+the opposite way, if it is even possible?
+
+The flightExsists gets the shortests path. No, it is not possible to get the longest path, there are some paths that can of length infinity.

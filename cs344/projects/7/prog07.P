@@ -1,0 +1,66 @@
+/* Author: Tyler Paulsen */
+
+[rule].
+flight(rochester,nyc).
+flight(rochester,dc).
+flight(rochester,detroit).
+
+flight(nyc,dc).
+flight(nyc,paris).
+flight(nyc,miami).
+
+flight(dc,miami).
+flight(dc,nyc).
+flight(dc,denver).
+
+flight(detroit,rochester).
+flight(detroit,dc).
+
+flight(denver,detroit).
+flight(denver,miami).
+flight(denver,dc).
+
+flight(miami,london).
+
+flight(london,nyc).
+flight(london,berlin).
+flight(london,paris).
+
+flight(berlin,miami).
+
+/* direct query */
+[clause].
+direct(A,B) :- flight(A,B).
+
+/* one stop query */
+[clause].
+oneStop(A,B) :- flight(A,C) , flight(C, B) , print([A,C,B]).
+twoStop(A,B) :- flight(A,C) , flight(C, D) , flight(D, B), print([A,C, D, B]).
+threeStop(A,B) :- flight(A,C) , flight(C, D) , flight(D, E), flight(E,B), print([A, C, D, E, B]).
+fourStop(A,B) :- flight(A,C) , flight(C, D) , flight(D, E), flight(E,F), flight(F,B), print([A, C, D, E, F, B]).
+
+flightExists(A,B) :- flightExists(A,B,100,[A]).
+flightExists(A,B,N,Q) :- flight(A,B).
+flightExists(A,B,N,P) :- flight(A,C), N > 0, N1 is N - 1, flightExists(C,B,N1,[C|P]),print([[P|C]|B]).
+
+/* query Tests */
+[query].
+/*
+direct(london,nyc).
+direct(detroit,nyc).
+direct(berlin,A).
+*/
+/*
+oneStop(rochester,nyc).
+twoStop(rochester,nyc).
+threeStop(rochester,nyc).
+fourStop(rochester,nyc).
+*/
+
+flightExists(rochester,paris).
+flightExists(paris,rochester).
+direct(berlin,miami).
+oneStop(london,rochester).
+twoStop(london,rochester).
+threeStop(london,rochester).
+fourStop(london,rochester).

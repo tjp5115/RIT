@@ -55,6 +55,7 @@ public class lightingParams
     public void setUpPhong (int program, GL2 gl2)
     {
         // Add your code here.
+
         int location = gl2.glGetUniformLocationARB(program,"Ax");
         System.out.println("Ax"+location);
         gl2.glUniform4fv(location, 1, Ax, 0);

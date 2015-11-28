@@ -2,10 +2,10 @@ import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
-import java.util.Arrays;
 
 /**
  * Created by Tyler on 11/19/2015.
+ * Viewproxy for the model connection to the UI.
  */
 public class ViewProxy implements ModelListener{
 
@@ -46,7 +46,7 @@ public class ViewProxy implements ModelListener{
         out.writeByte(id);
         out.close();
         byte[] payload = baos.toByteArray();
-        System.out.println(Arrays.toString(payload));
+        ////System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
     }
 
@@ -66,7 +66,7 @@ public class ViewProxy implements ModelListener{
         out.writeUTF(name);
         out.close();
         byte[] payload = baos.toByteArray();
-        System.out.println(Arrays.toString(payload));
+        ////System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
     }
 
@@ -86,7 +86,7 @@ public class ViewProxy implements ModelListener{
         out.writeByte(score);
         out.close();
         byte[] payload = baos.toByteArray();
-        System.out.println(Arrays.toString(payload));
+        //System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
     }
 
@@ -106,7 +106,7 @@ public class ViewProxy implements ModelListener{
         out.writeByte(markers);
         out.close();
         byte[] payload = baos.toByteArray();
-        System.out.println(Arrays.toString(payload));
+        //System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
     }
 
@@ -124,7 +124,7 @@ public class ViewProxy implements ModelListener{
         out.writeByte(i);
         out.close();
         byte[] payload = baos.toByteArray();
-        System.out.println(Arrays.toString(payload));
+        //System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
     }
 
@@ -142,7 +142,7 @@ public class ViewProxy implements ModelListener{
         out.writeByte(id);
         out.close();
         byte[] payload = baos.toByteArray();
-        System.out.println(Arrays.toString(payload));
+        //System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
     }
 
@@ -156,7 +156,7 @@ public class ViewProxy implements ModelListener{
         out.writeByte('Q');
         out.close();
         byte[] payload = baos.toByteArray();
-        System.out.println(Arrays.toString(payload));
+        //System.out.println(Arrays.toString(payload));
         mailbox.send(new DatagramPacket(payload, payload.length, clientAddress));
         mailboxManager.removeClient(clientAddress);
     }
@@ -176,22 +176,22 @@ public class ViewProxy implements ModelListener{
         switch(b){
             case 'J':
                 String name = in.readUTF();
-                System.out.println("Join ");
-                System.out.println(name);
+                //System.out.println("Join ");
+                //System.out.println(name);
                 viewListener.join(this,name);
                 break;
             case 'T':
                 int h = in.readByte();
                 int m = in.readByte();
-                System.out.println("Take "+ h+" " + m);
+                //System.out.println("Take "+ h+" " + m);
                 viewListener.take(h,m);
                 break;
             case 'N':
                 viewListener.newGame();
-                System.out.println("newgame");
+                //System.out.println("newgame");
                 break;
             case 'Q':
-                System.out.println("quit");
+                //System.out.println("quit");
                 viewListener.quit();
                 break;
             default:

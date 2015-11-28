@@ -1,4 +1,4 @@
-#version 150
+#version 120
 
 // Flat shading vertex shader
 
@@ -46,9 +46,36 @@ uniform vec4 ls_position;
 // Ambient light properties
 uniform vec4 a_color;
 
+// OUTGOING DATA
 varying vec4 flatShading;
 
-// OUTGOING DATA
+mat3 upperInverse(mat4 a){
+    mat3 inv;
+    float det =
+    a[0][0]*a[1][1]*a[2][2]*a[3][3] + a[0][0]*a[1][2]*a[2][3]*a[3][1] + a[0][0]*a[1][3]*a[2][1]*a[3][2]+
+    a[0][1]*a[1][0]*a[2][3]*a[3][2] + a[0][1]*a[1][2]*a[2][0]*a[3][3] + a[0][1]*a[1][3]*a[2][2]*a[3][0]+
+    a[0][2]*a[1][0]*a[2][1]*a[3][3] + a[0][2]*a[1][1]*a[2][3]*a[3][1] + a[0][2]*a[1][3]*a[2][0]*a[3][1]+
+    a[0][3]*a[1][0]*a[2][2]*a[3][1] + a[0][3]*a[1][1]*a[2][0]*a[3][2] + a[0][3]*a[1][2]*a[2][1]*a[3][0]-
+    a[0][0]*a[1][1]*a[2][3]*a[3][2] - a[0][0]*a[1][2]*a[2][1]*a[3][3] - a[0][0]*a[1][3]*a[2][2]*a[3][1]-
+    a[0][1]*a[1][0]*a[2][2]*a[3][3] - a[0][1]*a[1][2]*a[2][3]*a[3][0] - a[0][1]*a[1][3]*a[2][0]*a[3][2]-
+    a[0][2]*a[1][0]*a[2][3]*a[3][1] - a[0][2]*a[1][1]*a[2][0]*a[3][3] - a[0][2]*a[1][3]*a[2][1]*a[3][0]-
+    a[0][3]*a[1][0]*a[2][1]*a[3][2] - a[0][3]*a[1][1]*a[2][1]*a[3][0] - a[0][3]*a[1][2]*a[2][0]*a[3][1];
+
+    inv[0][0] = a[1][1]*a[2][2]*a[3][3] + a[1][2]*a[2][3]*a[3][1] + a[1][3]*a[2][1]*a[3][2] - a[1][1]*a[2][3]*a[3][2] -a[1][2]*a[2][1]*a[3][3] - a[1][3]*a[2][2]*a[3][1];
+    inv[0][1] = a[0][1]*a[2][3]*a[3][2] + a[1][2]*a[2][1]*a[3][3] + a[1][3]*a[2][2]*a[3][1] - a[0][1]*a[2][2]*a[3][3] -a[0][2]*a[2][3]*a[3][1] - a[0][3]*a[2][1]*a[3][2];
+    inv[0][2] = a[0][1]*a[1][2]*a[3][3] + a[0][2]*a[1][3]*a[3][1] + a[0][3]*a[1][1]*a[3][2] - a[0][1]*a[1][3]*a[3][2] -a[0][2]*a[1][1]*a[3][3] - a[0][3]*a[1][2]*a[3][1];
+
+    inv[1][0] = a[1][0]*a[2][3]*a[3][2] + a[1][2]*a[2][0]*a[3][3] + a[1][3]*a[2][2]*a[3][0] - a[1][0]*a[2][2]*a[3][3] -a[1][2]*a[2][3]*a[3][0] - a[1][3]*a[2][0]*a[3][2];
+    inv[1][1] = a[0][0]*a[2][2]*a[3][3] + a[0][2]*a[2][3]*a[3][0] + a[0][3]*a[2][0]*a[3][2] - a[0][0]*a[2][3]*a[3][2] -a[0][2]*a[2][0]*a[3][3] - a[0][3]*a[2][2]*a[3][0];
+    inv[1][2] = a[0][0]*a[1][3]*a[3][2] + a[0][2]*a[1][0]*a[3][3] + a[0][3]*a[1][2]*a[3][0] - a[0][0]*a[1][2]*a[3][3] -a[0][2]*a[1][3]*a[3][0] - a[0][3]*a[2][0]*a[3][2];
+
+    inv[2][0] = a[1][0]*a[2][1]*a[3][3] + a[1][1]*a[2][3]*a[3][0] + a[1][3]*a[2][0]*a[3][1] - a[1][0]*a[2][3]*a[3][1] -a[1][1]*a[2][0]*a[3][3] - a[1][3]*a[3][2]*a[3][1];
+    inv[2][1] = a[0][0]*a[2][3]*a[3][1] + a[0][1]*a[2][0]*a[3][3] + a[0][3]*a[2][1]*a[3][0] - a[0][0]*a[2][1]*a[3][3] -a[0][1]*a[2][3]*a[3][0] - a[0][3]*a[2][0]*a[3][1];
+    inv[2][2] = a[0][0]*a[1][1]*a[3][3] + a[0][1]*a[1][3]*a[3][0] + a[0][3]*a[1][0]*a[3][1] - a[0][0]*a[1][3]*a[3][1] -a[0][1]*a[1][0]*a[3][3] - a[0][3]*a[1][1]*a[3][0];
+
+
+    return 1/det * inv;
+}
 
 void main()
 {
@@ -110,16 +137,20 @@ void main()
 
     // Transform the vertex location into clip space
     gl_Position =  projMat * viewMat  * modelMat * vPosition;
+
     // normalize the normal
-    vec3 N = mat3(transpose(inverse(modelViewMat))) * normalize(vNormal);
+    vec3 N = transpose(upperInverse(modelViewMat)) * normalize(vNormal);
     // direction of light
-    vec3 L = vec3(normalize(ls_position - vPosition));
+    vec3 L = normalize(ls_position.xyz - vPosition.xyz);
     // reflection vector
     vec3 R = reflect(L,N);
-
-    float dist = distance(ls_position,vPosition);
-    //f_att = min( 1 / ())
+    // view vector
     vec3 V = vVec;
-    //flatShading = Ax * Ka * Dx + Lx * min(1/pow(dist,2),1) * ( Kd * Dx * dot(N, L) + Ks * Sx * pow(dot(R,V),n));
-    flatShading = ( Ax * Ka * Dx + Lx * (Kd * Dx * dot(L,N) + Ks * Sx * pow(dot(R,V),n)) );
+    //flatShading = ( Ax * Ka * Dx  + Lx * (Kd * Dx * dot(L,N) + Ks * Sx * pow(dot(R,V),n)) );
+
+    flatShading =  Ax * Ka;
+    flatShading += Kd * Dx * dot(L,N);
+    flatShading += Ks * Sx * pow(dot(R,V),n);
+    flatShading *= Lx;
 }
+

@@ -3,6 +3,8 @@ import java.util.LinkedList;
 
 /**
  * Created by Crystal on 11/19/2015.
+ *
+ * Model for the nim game.
  */
 public class NimModel implements ViewListener{
     private LinkedList<ModelListener> listeners = new LinkedList<ModelListener>();
@@ -15,26 +17,29 @@ public class NimModel implements ViewListener{
         board[1] = 4;
         board[2] = 5;
     }
-    public synchronized void addModelListener(ModelListener modelListener, String name){
-        try {
-            int id = listeners.size();
-            modelListener.heap(0, 3);
-            modelListener.heap(1, 4);
-            modelListener.heap(2, 5);
-            modelListener.id(id);
-            names[id] = name;
-            listeners.add(modelListener);
-            for(int i = 0; i < listeners.size();++i){
-                for (int k = 0; k < listeners.size();k++) {
-                    listeners.get(i).name(k, names[k]);
-                    listeners.get(i).score(k,0);
-                }
-                if (listeners.size() == 2 ){
-                    listeners.get(i).turn(0);
-                }
+
+    /**
+     * adds a model Listener (player), to the model.
+     *
+     * @param modelListener listener for the model
+     * @param name - name of the client connecting.
+     */
+    public synchronized void addModelListener(ModelListener modelListener, String name)throws IOException{
+        int id = listeners.size();
+        modelListener.heap(0, 3);
+        modelListener.heap(1, 4);
+        modelListener.heap(2, 5);
+        modelListener.id(id);
+        names[id] = name;
+        listeners.add(modelListener);
+        for(int i = 0; i < listeners.size();++i){
+            for (int k = 0; k < listeners.size();k++) {
+                listeners.get(i).name(k, names[k]);
+                listeners.get(i).score(k,0);
             }
-        }catch(Exception e){
-            System.out.println(e.toString());
+            if (listeners.size() == 2 ){
+                listeners.get(i).turn(0);
+            }
         }
     }
 
@@ -119,7 +124,7 @@ public class NimModel implements ViewListener{
      * @throws IOException
      */
     @Override
-    public synchronized void exit() throws IOException {
+    public void exit() throws IOException {
 
     }
 }
