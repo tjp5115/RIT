@@ -1,5 +1,5 @@
 #version 120
-
+//Author: Tyler Paulsen
 // Gouraud shading vertex shader
 
 // INCOMING DATA
@@ -53,7 +53,8 @@ varying vec3 normal;
 varying vec3 position;
 
 
-
+// Inverse matrix function for a 4x4 matrix. Only returns the upper 3x3 matrix.
+// used for the normal vector to put it in clip space
 mat3 upperInverse(mat4 a){
     mat3 inv;
     float det =
@@ -143,20 +144,29 @@ void main()
     // Transform the vertex location into clip space
     gl_Position =  projMat * viewMat  * modelMat * vPosition;
 
-    // normalize the normal
-    vec3 N = transpose(upperInverse(modelViewMat)) * normalize(vNormal);
-    // direction of light
-    vec3 L = vec3(normalize(ls_position - vPosition));
-    // reflection vector
-    vec3 R = reflect(L,N);
-    vec3 V = vVec;
-    // view vector.
-    color =  Ax * Ka ;
-    color += Kd * Dx * dot(L,N);
-    color += Ks * Sx * pow(dot(R,V),n);
-    color *= Lx;
-    position = vec3(modelViewMat * vPosition);
-    normal = N;
+    // lighting calculations.
+
+    // position in clip space
+    vec3 pos =  vec3(modelViewMat * vPosition);
+
+    // vectors for phong illumination model
+    vec3 N = normalize(transpose(upperInverse(modelViewMat)) * vNormal);
+    vec3 L = normalize(ls_position.xyz - pos.xyz);
+    vec3 V = normalize(-pos.xyz);
+    vec3 R = reflect(-L,N);
+    // ambient light
+    vec4 ambient = Ax * Ka * a_color;
+    // diffuse light
+    float diffReflection = max(dot(L,N),0.0);
+    vec4 diffuse =   Dx * Kd * diffReflection;
+
+    // specular light
+    if (diffReflection > 0.0 ){
+            vec4 spec = Sx * Ks * pow(max(dot(R,V),0.0), n);
+            color = ambient + Lx*(diffuse + spec );
+    }else{
+        color = ambient + Lx*(diffuse);
+    }
 }
 
 

@@ -1,5 +1,5 @@
 #version 120
-
+//Author: Tyler Paulsen
 // Flat shading vertex shader
 
 // INCOMING DATA
@@ -48,7 +48,8 @@ uniform vec4 a_color;
 
 // OUTGOING DATA
 varying vec4 flatShading;
-
+// Inverse matrix function for a 4x4 matrix. Only returns the upper 3x3 matrix.
+// used for the normal vector to put it in clip space
 mat3 upperInverse(mat4 a){
     mat3 inv;
     float det =
@@ -138,19 +139,29 @@ void main()
     // Transform the vertex location into clip space
     gl_Position =  projMat * viewMat  * modelMat * vPosition;
 
-    // normalize the normal
-    vec3 N = transpose(upperInverse(modelViewMat)) * normalize(vNormal);
-    // direction of light
-    vec3 L = normalize(ls_position.xyz - vPosition.xyz);
-    // reflection vector
-    vec3 R = reflect(L,N);
-    // view vector
-    vec3 V = vVec;
-    //flatShading = ( Ax * Ka * Dx  + Lx * (Kd * Dx * dot(L,N) + Ks * Sx * pow(dot(R,V),n)) );
+    //lighting calculations
 
-    flatShading =  Ax * Ka;
-    flatShading += Kd * Dx * dot(L,N);
-    flatShading += Ks * Sx * pow(dot(R,V),n);
-    flatShading *= Lx;
+    // position in clip space
+    vec3 pos =  vec3(modelViewMat * vPosition);
+
+    // vectors used in the phong illumination model
+    vec3 N = normalize(transpose(upperInverse(modelViewMat)) * vNormal);
+    vec3 L = normalize(ls_position.xyz - pos.xyz);
+    vec3 V = normalize(-pos.xyz);
+    vec3 R = reflect(-L,N);
+
+    //ambient light
+    vec4 ambient = Ax * Ka * a_color;
+
+    // diffuse light
+    float diffReflection = max(dot(L,N),0.0);
+    vec4 diffuse =   Dx * Kd * diffReflection;
+
+    // specular light
+    vec4 spec = vec4(0.0);
+    if (diffReflection > 0.0 ){
+        vec4 spec = Sx * Ks * pow(max(dot(R,V),0.0), n);
+    }
+    flatShading = ambient + Lx*(diffuse + spec );
 }
 

@@ -5,6 +5,7 @@
 // for the Shading Assignment.
 //
 // Students are to complete this class.
+// Author: Tyler Paulsen
 //
 
 import javax.media.opengl.*;
@@ -57,43 +58,43 @@ public class lightingParams
         // Add your code here.
 
         int location = gl2.glGetUniformLocationARB(program,"Ax");
-        System.out.println("Ax"+location);
+        //System.out.println("Ax"+location);
         gl2.glUniform4fv(location, 1, Ax, 0);
 
         location = gl2.glGetUniformLocationARB(program,"Ka");
-        System.out.println("Ka"+location);
+        //System.out.println("Ka"+location);
         gl2.glUniform1f(location, Ka);
 
         location = gl2.glGetUniformLocationARB(program,"Dx");
-        System.out.println("Dx"+location);
+        //System.out.println("Dx"+location);
         gl2.glUniform4fv(location, 1, Dx, 0);
 
         location = gl2.glGetUniformLocationARB(program,"Kd");
-        System.out.println("Kd"+location);
+        //System.out.println("Kd"+location);
         gl2.glUniform1f(location, Kd);
 
         location = gl2.glGetUniformLocationARB(program,"Sx");
-        System.out.println("Sx"+location);
+        //System.out.println("Sx"+location);
         gl2.glUniform4fv(location, 1, Sx, 0);
 
         location = gl2.glGetUniformLocationARB(program,"n");
-        System.out.println("n"+location);
+        //System.out.println("n"+location);
         gl2.glUniform1f(location, n);
 
         location = gl2.glGetUniformLocationARB(program,"Ks");
-        System.out.println("Ks"+location);
+        //System.out.println("Ks"+location);
         gl2.glUniform1f(location, Ks);
 
         location = gl2.glGetUniformLocationARB(program,"Lx");
-        System.out.println("Lx"+location);
+        //System.out.println("Lx"+location);
         gl2.glUniform4fv(location, 1, Lx, 0);
 
         location = gl2.glGetUniformLocationARB(program,"ls_position");
-        System.out.println("ls_pos"+location);
+        //System.out.println("ls_pos"+location);
         gl2.glUniform4fv(location, 1, ls_position, 0);
 
         location = gl2.glGetUniformLocationARB(program,"a_color");
-        System.out.println("a_color"+location);
+        //System.out.println("a_color"+location);
         gl2.glUniform4fv(location, 1, a_color, 0);
     }
 }
