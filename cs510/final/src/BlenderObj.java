@@ -19,33 +19,31 @@ public class BlenderObj {
     // file for obj
     private String path;
     // verts normals and faces of the polygon
-    private ArrayList verts = new ArrayList(); //list of verts
-    private ArrayList tex = new ArrayList(); // texture cord
-    private ArrayList normals = new ArrayList(); // list of normals
+    private ArrayList<float[]> verts = new ArrayList(); //list of verts
+    private ArrayList<float[]> tex = new ArrayList(); // texture cord
+    private ArrayList<float[]> normals = new ArrayList(); // list of normals
     private FloatBuffer vertBuff;
     private FloatBuffer texBuff;
     private FloatBuffer normBuff;
-    private int[] vbuffer,ebuffer;
+    private int[] vbuffer;
     // indicies for the obj
-    private ArrayList  vertIndices = new ArrayList();
-    private ArrayList  texIndices = new ArrayList();
-    private ArrayList  normalIndices = new ArrayList();
+    private ArrayList<int[]>  vertIndices = new ArrayList();
+    private ArrayList<int[]>  texIndices = new ArrayList();
+    private ArrayList<int[]>  normalIndices = new ArrayList();
     private int triangleCount;
     // init properties to bind to gl2.
     boolean firstDraw;
     boolean textured;
+    boolean bufferInit;
     // constructor. 1) process file     2) create model data buffer
     BlenderObj(String path){
         this.path = path;
         load();
-        //reorder the points
-        verts = index(vertIndices,verts);
-        tex = index(texIndices, tex);
-        normals = index(normalIndices, normals);
         firstDraw = true;
+        vbuffer = new int[1];
     }
     private void load(){
-        String line = null;
+        String line;
         try {
             File file = new File(path);
             FileReader reader = new FileReader(file);
@@ -82,17 +80,6 @@ public class BlenderObj {
 
     }
 
-    public ArrayList index(ArrayList indices, ArrayList points) {
-        int index;
-        float []point;
-        ArrayList newPoints = new ArrayList();
-        for (int i = 0; i < indices.size(); ++i) {
-            index = (int) indices.get(i);
-            point = (float [])points.get(index-1);
-            newPoints.add(point);
-        }
-        return newPoints;
-    }
     private float[] processFloat(String[] values){
         float []data = new float[values.length-1];
         for (int i = 1; i < values.length; ++i){
@@ -101,8 +88,8 @@ public class BlenderObj {
         return data;
     }
     private void processIndicies(String[] values){
-        float []vertI= new float[3];
-        float []normalI= new float[3];
+        int[]vertI= new int[3];
+        int[]normalI= new int[3];
         String val[];
         for (int i = 1; i < values.length; ++i){
             val = values[i].split("//");
@@ -118,15 +105,30 @@ public class BlenderObj {
         normalIndices.add(normalI);
     }
 
+    public void update(GL2 gl2){
+        // get your vertices and elements
+        // set up the vertex buffer
+        int bf[] = new int[1];
+        if (bufferInit) {
+            bf[0] = vbuffer[0];
+            gl2.glDeleteBuffers(1, bf, 0);
+        }
+        gl2.glGenBuffers(1, vbuffer, 0);
+        gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
+        gl2.glBufferData(GL.GL_ARRAY_BUFFER, vertBuff.limit() + normBuff.limit(), null, GL.GL_STATIC_DRAW);
+        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertBuff.limit(), vertBuff);
+        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vertBuff.limit(), normBuff.limit(), normBuff);
+
+        bufferInit = true;
+    }
+
     /**
      * create the buffers to bind
      */
     private void createBufferData(GL2 gl2){
         // holder variables
-        int[] v, n, t;
-        float point[] = new float[3];
-        float texPoint[] = new float[2];
-
+        int [] v,n;
+        int []t = new int[3];
         // get the standard size of the buffer
         int bufSize = 3 * triangleCount;
 
@@ -138,64 +140,55 @@ public class BlenderObj {
         texBuff = BufferUtil.newFloatBuffer(bufSize * 2);
         texBuff.position(0);
 
-        // put data into the model data.
+        // put data into the buffers in the correct order.
         for(int i=0; i<vertIndices.size();i++){
-            v = (int[])vertIndices.get(i);
-            n = (int[])normalIndices.get(i);
-            t = (int[])texIndices.get(i);
+            v = vertIndices.get(i);
+            n = normalIndices.get(i);
+            if(textured) t = texIndices.get(i);
             for(int k=0; k<v.length;k++){
-                // put in the texture data.
-                if(textured) {
-                    for (int tI = 0; tI < texPoint.length; ++tI) {
-                        texPoint[tI] = ((float[]) tex.get(t[k] - 1))[tI];
-                    }
-                    texBuff.put(texPoint);
-                }
-
-                // put in the normal points
-                for(int nI = 0; nI < point.length; ++nI){
-                    point[nI] = ((float[])normals.get(n[k] - 1))[nI];
-                }
-                normBuff.put(point);
-
-                // put in the vertex points
-                for(int vI = 0; vI < point.length; ++vI){
-                    point[vI] = ((float[])verts.get(v[k] - 1))[vI];
-                }
-                vertBuff.put(point);
+                // add each vertex to their respected buffers.
+                if(textured) texBuff.put(tex.get(t[k]-1));
+                normBuff.put(normals.get(n[k]-1));
+                vertBuff.put(verts.get(v[k]-1));
             }
         }
+        System.out.println(vertBuff.position());
         texBuff.position(0);
         normBuff.position(0);
         vertBuff.position(0);
 
-
-    }
-    public int triCount(){
-        return triangleCount;
     }
     public void drawModel(GL2 gl2, int program){
         if(firstDraw){
             createBufferData(gl2);
-
             gl2.glGenBuffers(1, vbuffer, 0);
-
             gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
-            gl2.glBufferData(GL.GL_ARRAY_BUFFER, vertBuff.capacity() + normBuff.capacity(), null, GL.GL_STATIC_DRAW);
-            gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertBuff.capacity(), vertBuff);
-            gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vertBuff.capacity(), normBuff.capacity(), normBuff);
+            System.out.println(triangleCount);
+            System.out.println(vertBuff.toString());
+            gl2.glBufferData(GL.GL_ARRAY_BUFFER, vertBuff.limit() + normBuff.limit(), null, GL.GL_STATIC_DRAW);
+            gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertBuff.limit(), vertBuff);
+            gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vertBuff.limit(), normBuff.limit(), normBuff);
 
-            // generate the element buffer
-            gl2.glGenBuffers (1, ebuffer, 0);
-            gl2.glBindBuffer( GL.GL_ELEMENT_ARRAY_BUFFER, ebuffer[0] );
-            gl2.glBufferData( GL.GL_ELEMENT_ARRAY_BUFFER, edataSize, elements,
-                    GL.GL_STATIC_DRAW );
             firstDraw = false;
         }
-        gl2.glEnable(GL2.GL_CULL_FACE);
-        gl2.glCullFace(GL2.GL_BACK);
-        gl2.glPolygonMode(GL2.GL_FRONT,GL2.GL_LINE);
-        gl2.glDrawArrays(3, 0, triangleCount*3); //
-        gl2.glDisable(GL2.GL_CULL_FACE);
+        gl2.glUseProgram(program);
+
+        // bind buffer
+        gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
+
+        // offset for the second
+        long offset = (long)vertBuff.limit();
+
+        // set up the vertex attribute variables
+        int vPosition = gl2.glGetAttribLocation( program, "vPosition" );
+        gl2.glEnableVertexAttribArray( vPosition );
+        gl2.glVertexAttribPointer(vPosition, 3, GL.GL_FLOAT, false, 0, 0l);
+        // set up the normal attribute variables.
+        int vNormal = gl2.glGetAttribLocation( program, "vNormal" );
+        gl2.glEnableVertexAttribArray(vNormal);
+        gl2.glVertexAttribPointer(vNormal, 3, GL.GL_FLOAT, false, 0, offset);
+
+        gl2.glDrawArrays(GL.GL_TRIANGLES,0, verts.size());
+
     }
 }

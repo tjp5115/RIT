@@ -7,7 +7,7 @@ void main()
     // gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 );
 
     // P1 Phosphor screen (green monochrome) effect
-    gl_FragColor = vec4( 0.0, 1.0, 0.0, 1.0 );
+    gl_FragColor = color;
 
     // P2 Phosphor screen (Blue - green monochrome) effect
     // gl_FragColor = vec4( 0.0, 1.0, 0.8, 1.0 );
