@@ -31,5 +31,5 @@ void main()
                          0.0,  0.0,  0.0,  1.0 );
 
         gl_Position = rz * ry * rx * vec4(vPosition,1.0);
-        color = vec4(1.0,1.0,0.0,1.0);
+        color = vec4(.91,.81,.66,1.0);
 }

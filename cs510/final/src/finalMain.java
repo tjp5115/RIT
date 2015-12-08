@@ -80,7 +80,7 @@ public class finalMain implements GLEventListener, KeyListener
         G.addGLEventListener(this);
         G.addKeyListener(this);
 
-        obj = new BlenderObj("coolImg.obj");
+        obj = new BlenderObj("modified_cylinder.obj");
     }
 
     private void errorCheck( GL2 gl2 )
@@ -105,13 +105,7 @@ public class finalMain implements GLEventListener, KeyListener
         if( animating ) {
             animate();
         }
-        // This should all probably be in createNewShape...  However,
-        // since we can only get access to the GL2 during display, we'll
-        // have to include it here.
-        if (updateNeeded) {
-            obj.update(gl2);
-            updateNeeded = false;
-        }
+
         // pass in our rotations as a uniform variable
         theta = gl2.glGetUniformLocation (program, "theta");
         gl2.glUniform3fv (theta, 1, angles, 0);
@@ -196,7 +190,7 @@ public class finalMain implements GLEventListener, KeyListener
         gl2.glEnable( GL.GL_DEPTH_TEST );
         gl2.glEnable(GL.GL_CULL_FACE);
         gl2.glCullFace(GL.GL_BACK);
-        gl2.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
+        //gl2.glPolygonMode(GL.GL_FRONT_AND_BACK,GL.GL_FILL);
         gl2.glFrontFace(GL.GL_CCW);
         gl2.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl2.glDepthFunc(GL.GL_LESS);

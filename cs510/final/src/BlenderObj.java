@@ -1,3 +1,4 @@
+import com.jogamp.common.nio.Buffers;
 import com.sun.prism.impl.BufferUtil;
 
 import java.io.FileReader;
@@ -5,7 +6,9 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.media.opengl.GL;
@@ -22,10 +25,15 @@ public class BlenderObj {
     private ArrayList<float[]> verts = new ArrayList(); //list of verts
     private ArrayList<float[]> tex = new ArrayList(); // texture cord
     private ArrayList<float[]> normals = new ArrayList(); // list of normals
-    private FloatBuffer vertBuff;
-    private FloatBuffer texBuff;
-    private FloatBuffer normBuff;
     private int[] vbuffer;
+    private int[] ebuffer;
+
+    private ArrayList<Short> elements = new ArrayList<>();
+
+    FloatBuffer texBuff;
+    FloatBuffer normBuff;
+    FloatBuffer vertBuff;
+
     // indicies for the obj
     private ArrayList<int[]>  vertIndices = new ArrayList();
     private ArrayList<int[]>  texIndices = new ArrayList();
@@ -35,12 +43,15 @@ public class BlenderObj {
     boolean firstDraw;
     boolean textured;
     boolean bufferInit;
+    short nverts = 0;
     // constructor. 1) process file     2) create model data buffer
     BlenderObj(String path){
         this.path = path;
+
         load();
         firstDraw = true;
         vbuffer = new int[1];
+        ebuffer = new int[1];
     }
     private void load(){
         String line;
@@ -61,6 +72,7 @@ public class BlenderObj {
                         break;
                     case "v":
                         verts.add(processFloat(values));
+                        nverts++;
                         break;
                     case "f":
                         triangleCount++;
@@ -69,7 +81,7 @@ public class BlenderObj {
                         break;
                 }
             }
-
+            bufferedReader.close();
         }catch ( FileNotFoundException fnfe){
             System.err.println("Object file for polygon not found.");
             System.exit(1);
@@ -105,28 +117,11 @@ public class BlenderObj {
         normalIndices.add(normalI);
     }
 
-    public void update(GL2 gl2){
-        // get your vertices and elements
-        // set up the vertex buffer
-        int bf[] = new int[1];
-        if (bufferInit) {
-            bf[0] = vbuffer[0];
-            gl2.glDeleteBuffers(1, bf, 0);
-        }
-        gl2.glGenBuffers(1, vbuffer, 0);
-        gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
-        gl2.glBufferData(GL.GL_ARRAY_BUFFER, vertBuff.limit() + normBuff.limit(), null, GL.GL_STATIC_DRAW);
-        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertBuff.limit(), vertBuff);
-        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vertBuff.limit(), normBuff.limit(), normBuff);
-
-        bufferInit = true;
-    }
-
     /**
      * create the buffers to bind
      */
     private void createBufferData(GL2 gl2){
-        // holder variables
+          // holder variables
         int [] v,n;
         int []t = new int[3];
         // get the standard size of the buffer
@@ -150,25 +145,47 @@ public class BlenderObj {
                 if(textured) texBuff.put(tex.get(t[k]-1));
                 normBuff.put(normals.get(n[k]-1));
                 vertBuff.put(verts.get(v[k]-1));
+               // System.out.println(Arrays.toString(verts.get(v[k]-1)));
             }
         }
-        System.out.println(vertBuff.position());
-        texBuff.position(0);
-        normBuff.position(0);
-        vertBuff.position(0);
+        texBuff.flip();
+        normBuff.flip();
+        vertBuff.flip();
+        /*
+        System.out.println(triangleCount);
+        System.out.println(vertBuff.toString());
+            System.out.println("vert: " + verts.size());
+        for(int i=0;i<vertBuff.limit();++i){
+            System.out.println(i+" = "+vertBuff.get(i));
+        }
+        */
 
+        int vSize = vertBuff.limit() * Buffers.SIZEOF_FLOAT;
+        int bSize = normBuff.limit() * Buffers.SIZEOF_FLOAT;
+
+        gl2.glGenBuffers(1, vbuffer, 0);
+        gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
+        gl2.glBufferData(GL.GL_ARRAY_BUFFER, bSize + vSize, vertBuff, GL.GL_STATIC_DRAW);
+        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vSize, vertBuff);
+        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vSize, bSize, normBuff);
+    }
+
+
+    public void cleanup(){
+        normBuff.clear();
+        texBuff.clear();
+        vertBuff.clear();
+        verts.clear();
+        tex.clear();
+        normals.clear();
+        normalIndices.clear();
+        texIndices.clear();
+        vertIndices.clear();
     }
     public void drawModel(GL2 gl2, int program){
         if(firstDraw){
             createBufferData(gl2);
-            gl2.glGenBuffers(1, vbuffer, 0);
-            gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
-            System.out.println(triangleCount);
-            System.out.println(vertBuff.toString());
-            gl2.glBufferData(GL.GL_ARRAY_BUFFER, vertBuff.limit() + normBuff.limit(), null, GL.GL_STATIC_DRAW);
-            gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vertBuff.limit(), vertBuff);
-            gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vertBuff.limit(), normBuff.limit(), normBuff);
-
+            cleanup();
             firstDraw = false;
         }
         gl2.glUseProgram(program);
@@ -178,7 +195,6 @@ public class BlenderObj {
 
         // offset for the second
         long offset = (long)vertBuff.limit();
-
         // set up the vertex attribute variables
         int vPosition = gl2.glGetAttribLocation( program, "vPosition" );
         gl2.glEnableVertexAttribArray( vPosition );
@@ -188,7 +204,6 @@ public class BlenderObj {
         gl2.glEnableVertexAttribArray(vNormal);
         gl2.glVertexAttribPointer(vNormal, 3, GL.GL_FLOAT, false, 0, offset);
 
-        gl2.glDrawArrays(GL.GL_TRIANGLES,0, verts.size());
-
+        gl2.glDrawArrays(GL.GL_TRIANGLES, 0, triangleCount * 3);
     }
 }
