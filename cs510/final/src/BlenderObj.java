@@ -151,23 +151,15 @@ public class BlenderObj {
         texBuff.flip();
         normBuff.flip();
         vertBuff.flip();
-        /*
-        System.out.println(triangleCount);
-        System.out.println(vertBuff.toString());
-            System.out.println("vert: " + verts.size());
-        for(int i=0;i<vertBuff.limit();++i){
-            System.out.println(i+" = "+vertBuff.get(i));
-        }
-        */
 
         int vSize = vertBuff.limit() * Buffers.SIZEOF_FLOAT;
-        int bSize = normBuff.limit() * Buffers.SIZEOF_FLOAT;
+        int nSize = normBuff.limit() * Buffers.SIZEOF_FLOAT;
 
         gl2.glGenBuffers(1, vbuffer, 0);
         gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
-        gl2.glBufferData(GL.GL_ARRAY_BUFFER, bSize + vSize, vertBuff, GL.GL_STATIC_DRAW);
+        gl2.glBufferData(GL.GL_ARRAY_BUFFER, nSize + vSize, null, GL.GL_STATIC_DRAW);
         gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, vSize, vertBuff);
-        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vSize, bSize, normBuff);
+        gl2.glBufferSubData(GL.GL_ARRAY_BUFFER, vSize, nSize, normBuff);
     }
 
 
@@ -194,7 +186,7 @@ public class BlenderObj {
         gl2.glBindBuffer(GL.GL_ARRAY_BUFFER, vbuffer[0]);
 
         // offset for the second
-        long offset = (long)vertBuff.limit();
+        long offset = (long)vertBuff.limit() * Buffers.SIZEOF_FLOAT;;
         // set up the vertex attribute variables
         int vPosition = gl2.glGetAttribLocation( program, "vPosition" );
         gl2.glEnableVertexAttribArray( vPosition );

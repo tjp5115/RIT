@@ -30,6 +30,10 @@ public class finalMain implements GLEventListener, KeyListener
     ///
     viewParams myView;
 
+    //lighting information
+    lightingParams lightParam;
+    int[] modelLight;
+
     ///
     // image selection and camera/transformation control
     ///
@@ -65,7 +69,7 @@ public class finalMain implements GLEventListener, KeyListener
     public finalMain(GLCanvas G)
     {
 
-        angles = new float[2];
+        angles = new float[shapes.values().length];
         angles[0] = .0f;
         angles[1] = .0f;
 
@@ -80,8 +84,39 @@ public class finalMain implements GLEventListener, KeyListener
         G.addGLEventListener(this);
         G.addKeyListener(this);
 
+        float[] Lx = {1.0f, 1.0f, 0.0f, 1.0f};
+        float[] pos = {0.0f, 10.0f, 2.0f, 1.0f};
+        float[] ambient = {0.5f, 0.5f, 0.5f, 1.0f};
+        lightParam = new lightingParams(Lx, pos, ambient);
+        modelLight = new int[shapes.values().length];
+
         modifiedCube = new BlenderObj("modified_cube.obj");
+
+        // Material properties for Cube
+        float[] Ax = {0.5f, 0.1f, 0.9f, 1.0f};
+        float   Ka = 0.5f;
+
+        float[] Dx = {0.89f, 0.0f, 0.0f, 1.0f};
+        float   Kd = 0.7f;
+
+        float[] Sx = {1.0f, 1.0f, 1.0f, 1.0f};
+        float   n = 10.0f;
+        float   Ks = 1.0f;
+        modelLight[shapes.CUBE.ordinal()] = lightParam.addObject(Ax,Ka,Dx,Kd,Sx,n,Ks);
+
+
+        // Material properties for Cylinder
+        Ax = new float[]{0.5f, 0.1f, 0.9f, 1.0f};
+        Ka = 0.5f;
+
+        Dx = new float[]{0.89f, 0.0f, 0.0f, 1.0f};
+        Kd = 0.7f;
+
+        Sx = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
+        n = 10.0f;
+        Ks = 1.0f;
         modifiedCylinder = new BlenderObj("modified_cylinder.obj");
+        modelLight[shapes.CYLINDER.ordinal()] = lightParam.addObject(Ax,Ka,Dx,Kd,Sx,n,Ks);
     }
 
     private void errorCheck( GL2 gl2 )
@@ -106,27 +141,40 @@ public class finalMain implements GLEventListener, KeyListener
         // clear your frame buffers
         gl2.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-        // set up viewing and projection parameters
-        myView.setUpFrustum( program, gl2 );
-
+        myView.setUpFrustum(program, gl2);
         // set up the camera
-        myView.setUpCamera( program, gl2,
+        myView.setUpCamera(program, gl2,
                 0.2f, 3.0f, 6.5f,
                 0.0f, 1.0f, 0.0f,
                 0.0f, 1.0f, 0.0f
         );
 
+        //
+        // Set up and Draw the Modified Cube
+        //
+
+        // set up Phong illumination
+        lightParam.setUpPhong(program, gl2, shapes.CUBE.ordinal());
+        // set up viewing and projection parameters
         // set up transformations for the modified cube
         myView.setUpTransforms(program, gl2,
                 1.7f, 1.7f, 1.7f,
                 angles[shapes.CUBE.ordinal()],
                 angles[shapes.CUBE.ordinal()] - 40,
-                angles[shapes.CUBE.ordinal()]-5,
+                angles[shapes.CUBE.ordinal()] - 5,
                 -.8f, 1.0f, .0f
         );
+
         // draw the modified cube
         modifiedCube.drawModel(gl2, program);
 
+        //
+        // Set up and Draw the Modified Cylinder
+        //
+
+        // set up Phong illumination
+        lightParam.setUpPhong( program, gl2, shapes.CYLINDER.ordinal());
+        ;
         // set up transformations for the modified cylinder
         myView.setUpTransforms(program, gl2,
                 1.5f, 1.5f, 1.5f,
@@ -141,9 +189,6 @@ public class finalMain implements GLEventListener, KeyListener
         if( animating ) {
             animate();
         }
-
-
-
     }
     /**
      * Simple animate function
