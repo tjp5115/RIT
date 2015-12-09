@@ -1,249 +1,226 @@
 //
-// viewParams.java
+//  viewParams.java
 //
-// Created by Joe Geigel on 1/23/13.
-//
-// Contributor: Tyler Paulsen
+//  Class for setting up the view parameters.
 //
 
 import javax.media.opengl.*;
-import javax.media.opengl.fixedfunc.*;
-import java.util.Arrays;
 
 public class viewParams
 {
+    // current values for transformations
+    private float rotateDefault[];
+    private float translateDefault[];
+    private float scaleDefault[];
 
-    //projection transformations variables.
-    private static float l = -1.0f;
-    private static float r = 1.0f;
-    private static float t = 1.0f;
-    private static float b = -1.0f;
-    private static float n = 0.9f;
-    private static float f = 4.5f;
-    // orthographical projection matrix
-    private float[] ortho = {
-            2f/(r-l), 0f, 0f, 0f,
-            0f, 2f/(t-b), 0f, 0f,
-            0f, 0f, -2f/(f-n), 0f,
-            -1f*(r+l)/(r-l), -1f*(t+b)/(t-b), -1f*(f+n)/(f-n), 1f
-    };
-    // frustum projection matrix
-    private float[] frustum= {
-            (2f*n)/(r-l),0f ,0f,0f,
-            0f,(2f*n)/(t-b),0f,0f,
-            (r+l)/(r-l),(t+b)/(t-b),-1f*(f+n)/(f-n),-1f,
-            0f,0f,(-2f*f*n)/(f-n),0f
-    };
+    // current view values
+    private float eyeDefault[];
+    private float lookDefault[];
+    private float upDefault[];
 
-    ///
-    // constructor
-    ///
+    // clipping window boundaries
+    private float left = -1.0f;
+    private float right = 1.0f;
+    private float top = 1.0f;
+    private float bottom = -1.0f;
+    private float near =3.0f;
+    private float far = 100.5f;
+
+    /**
+     * constructor
+     */
     public viewParams()
     {
+        rotateDefault = new float[3];
+        rotateDefault[0] = 0.0f;
+        rotateDefault[1] = 50.0f;
+        rotateDefault[2] = 90.0f;
 
+        translateDefault = new float[3];
+        translateDefault[0] = 1.0f;
+        translateDefault[1] = 0.0f;
+        translateDefault[2] = -1.0f;
+
+        scaleDefault = new float[3];
+        scaleDefault[0] = 1.0f;
+        scaleDefault[1] = 4.0f;
+        scaleDefault[2] = 1.0f;
+
+        eyeDefault = new float[3];
+        eyeDefault[0] = 0.0f;
+        eyeDefault[1] = 3.0f;
+        eyeDefault[2] = 3.0f;
+
+        lookDefault = new float[3];
+        lookDefault[0] = 1.0f;
+        lookDefault[1] = 0.0f;
+        lookDefault[2] = 0.0f;
+
+        upDefault = new float[3];
+        upDefault[0] = 0.0f;
+        upDefault[1] = 1.0f;
+        upDefault[2] = 0.0f;
     }
 
 
-    ///
-    // This function sets up the view and projection parameter for a frustum
-    // projection of the scene. See the assignment description for the values
-    // for the projection parameters.
-    //
-    // You will need to write this function, and maintain all of the values
-    // needed to be sent to the vertex shader.
-    //
-    // @param program - The ID of an OpenGL (GLSL) shader program to which
-    //    parameter values are to be sent
-    //
-    // @param gl2 - GL2 object on which all OpenGL calls are to be made
-    //
-    ///
-    public void setUpFrustum (int program, GL2 gl2)
+    /**
+     * This function sets up the view and projection parameter for a frustum
+     * projection of the scene. See the assignment description for the values
+     * for the projection parameters.
+     *
+     * You will need to write this function, and maintain all of the values
+     * needed to be sent to the vertex shader.
+     *
+     * @param program - The ID of an OpenGL (GLSL) shader program to which
+     *    parameter values are to be sent
+     * @param gl2 - GL2 object on which all OpenGL calls are to be made
+     *
+     */
+    public void setUpFrustum( int program, GL2 gl2 )
     {
-        // Add your code here.
-        int location = gl2.glGetUniformLocationARB(program,"projection");
-        gl2.glUniformMatrix4fvARB(location,1,false,frustum,0);
-    }
+        int leftLoc = gl2.glGetUniformLocation( program , "left" );
+        int rightLoc = gl2.glGetUniformLocation( program , "right" );
+        int topLoc = gl2.glGetUniformLocation( program , "top" );
+        int bottomLoc = gl2.glGetUniformLocation( program , "bottom" );
+        int nearLoc = gl2.glGetUniformLocation( program , "near" );
+        int farLoc = gl2.glGetUniformLocation( program , "far" );
 
-    ///
-    // This function sets up the view and projection parameter for an
-    // orthographic projection of the scene. See the assignment description
-    // for the values for the projection parameters.
-    //
-    // You will need to write this function, and maintain all of the values
-    // needed to be sent to the vertex shader.
-    //
-    // @param program - The ID of an OpenGL (GLSL) shader program to which
-    //    parameter values are to be sent
-    //
-    // @param gl2 - GL2 object on which all OpenGL calls are to be made
-    //
-    ///
-    public void setUpOrtho (int program, GL2 gl2)
-    {
-        // Add your code here.
-
-        //set the projection matrix as the private ortho array
-        int location = gl2.glGetUniformLocationARB(program,"projection");
-        gl2.glUniformMatrix4fvARB(location,1,false,ortho,0);
-
+        gl2.glUniform1f( leftLoc, left );
+        gl2.glUniform1f( rightLoc, right );
+        gl2.glUniform1f( topLoc, top );
+        gl2.glUniform1f( bottomLoc, bottom );
+        gl2.glUniform1f( nearLoc, near );
+        gl2.glUniform1f( farLoc, far );
     }
 
 
-    ///
-    // This function clears any transformations, setting the values to the
-    // defaults: no scaling (scale factor of 1), no rotation (degree of
-    // rotation = 0), and no translation (0 translation in each direction).
-    //
-    // You will need to write this function, and maintain all of the values
-    // which must be sent to the vertex shader.
-    //
-    // @param program - The ID of an OpenGL (GLSL) shader program to which
-    //    parameter values are to be sent
-    // @param gl2 - GL2 object on which all OpenGL calls are to be made
-    ///
+    /**
+     * This function clears any transformations, setting the values to the
+     * defaults: no scaling (scale factor of 1), no rotation (degree of
+     * rotation = 0), and no translation (0 translation in each direction).
+     *
+     * You will need to write this function, and maintain all of the values
+     * which must be sent to the vertex shader.
+     *
+     * @param program - The ID of an OpenGL (GLSL) shader program to which
+     *    parameter values are to be sent
+     * @param gl2 - GL2 object on which all OpenGL calls are to be made
+     */
     public void clearTransforms( int program, GL2 gl2 )
     {
-        // Add your code here.
+        int thetaLoc = gl2.glGetUniformLocation( program , "theta" );
+        int transLoc = gl2.glGetUniformLocation( program , "trans" );
+        int scaleLoc = gl2.glGetUniformLocation( program , "scale" );
 
-        //default angles.
-        float angles[] = {1f, 1f, 1f};
-        int location = gl2.glGetUniformLocationARB(program,"theta");
-        gl2.glUniform3fv(location,1,angles,0);
-
-        //default scale
-        float scale[] = {1f, 1f, 1f};
-        location = gl2.glGetUniformLocationARB(program,"scale");
-        gl2.glUniform3fv(location,1,scale,0);
-
-        //default translate
-        float translate[] = {0f, 0f, 0f };
-        location = gl2.glGetUniformLocationARB(program,"translate");
-        gl2.glUniform3fv(location,1,translate,0);
+        gl2.glUniform3fv( thetaLoc, 1, rotateDefault, 0 );
+        gl2.glUniform3fv( transLoc, 1, translateDefault, 0 );
+        gl2.glUniform3fv( scaleLoc, 1, scaleDefault, 0 );
     }
 
 
-    ///
-    // This function sets up the transformation parameters for the vertices
-    // of the teapot.  The order of application is specified in the driver
-    // program.
-    //
-    // You will need to write this function, and maintain all of the values
-    // which must be sent to the vertex shader.
-    //
-    // @param program - The ID of an OpenGL (GLSL) shader program to which
-    //    parameter values are to be sent
-    // @param gl2 - GL2 object on which all OpenGL calls are to be made
-    // @param scaleX - amount of scaling along the x-axis
-    // @param scaleY - amount of scaling along the y-axis
-    // @param scaleZ - amount of scaling along the z-axis
-    // @param rotateX - angle of rotation around the x-axis, in degrees
-    // @param rotateY - angle of rotation around the y-axis, in degrees
-    // @param rotateZ - angle of rotation around the z-axis, in degrees
-    // @param translateX - amount of translation along the x axis
-    // @param translateY - amount of translation along the y axis
-    // @param translateZ - amount of translation along the z axis
-    ///
+    /**
+     * This function sets up the transformation parameters for the vertices
+     * of the shapes.  The order of application is specified in the driver
+     * program.
+     *
+     * You will need to write this function, and maintain all of the values
+     * which must be sent to the vertex shader.
+     *
+     * @param program - The ID of an OpenGL (GLSL) shader program to which
+     *    parameter values are to be sent
+     * @param gl2 - GL2 object on which all OpenGL calls are to be made
+     * @param scaleX - amount of scaling along the x-axis
+     * @param scaleY - amount of scaling along the y-axis
+     * @param scaleZ - amount of scaling along the z-axis
+     * @param rotateX - angle of rotation around the x-axis, in degrees
+     * @param rotateY - angle of rotation around the y-axis, in degrees
+     * @param rotateZ - angle of rotation around the z-axis, in degrees
+     * @param translateX - amount of translation along the x axis
+     * @param translateY - amount of translation along the y axis
+     * @param translateZ - amount of translation along the z axis
+     */
     public void setUpTransforms( int program, GL2 gl2,
-        float scaleX, float scaleY, float scaleZ,
-        float rotateX, float rotateY, float rotateZ,
-        float translateX, float translateY, float translateZ )
+                                 float scaleX, float scaleY, float scaleZ,
+                                 float rotateX, float rotateY, float rotateZ,
+                                 float translateX, float translateY, float translateZ )
     {
-        // Add your code here.
+        float scaleVec[] = { scaleX, scaleY, scaleZ };
+        float rotateVec[] = { rotateX, rotateY, rotateZ };
+        float translateVec[] = { translateX, translateY, translateZ };
 
-        // set rotation
-        float angles[] = {rotateX,rotateY,rotateZ};
-        int location = gl2.glGetUniformLocationARB(program,"theta");
-        gl2.glUniform3fv(location,1,angles,0);
+        int thetaLoc = gl2.glGetUniformLocation( program , "theta" );
+        int transLoc = gl2.glGetUniformLocation( program , "trans" );
+        int scaleLoc = gl2.glGetUniformLocation( program , "scale" );
 
-        //set scale
-        float scale[] = {scaleX,scaleY,scaleZ};
-        location = gl2.glGetUniformLocationARB(program,"scale");
-        gl2.glUniform3fv(location,1,scale,0);
-
-        //set translate
-        float translate[] = {translateX,translateY,translateZ};
-        location = gl2.glGetUniformLocationARB(program,"translate");
-        gl2.glUniform3fv(location,1,translate,0);
+        // send down to the shader
+        gl2.glUniform3fv( thetaLoc, 1, rotateVec, 0 );
+        gl2.glUniform3fv( transLoc, 1, translateVec, 0 );
+        gl2.glUniform3fv( scaleLoc, 1, scaleVec, 0 );
     }
 
 
-    ///
-    // This function clears any changes made to camera parameters, setting the
-    // values to the defaults: eye (0.0,0.0,0.0), lookat (0,0,0.0,-1.0),
-    // and up vector (0.0,1.0,0.0).
-    //
-    // You will need to write this function, and maintain all of the values
-    // which must be sent to the vertex shader.
-    //
-    // @param program - The ID of an OpenGL (GLSL) shader program to which
-    //    parameter values are to be sent
-    // @param gl2 - GL2 object on which all OpenGL calls are to be made
-    ///
+    /**
+     * This function clears any changes made to camera parameters, setting the
+     * values to the defaults: eyepoint (0.0,0.0,0.0), lookat (0,0,0.0,-1.0),
+     * and up vector (0.0,1.0,0.0).
+     *
+     * You will need to write this function, and maintain all of the values
+     * which must be sent to the vertex shader.
+     *
+     * @param program - The ID of an OpenGL (GLSL) shader program to which
+     *    parameter values are to be sent
+     * @param gl2 - GL2 object on which all OpenGL calls are to be made
+     */
     void clearCamera( int program, GL2 gl2 )
     {
-        // Add your code here.
+        int posLoc = gl2.glGetUniformLocation( program, "cPosition" );
+        int lookLoc = gl2.glGetUniformLocation( program, "cLookAt" );
+        int upVecLoc = gl2.glGetUniformLocation( program, "cUp" );
 
-        // default eye vector
-        float eye[] = {0f,0f,0f};
-        int location = gl2.glGetUniformLocationARB(program,"eye");
-        gl2.glUniform3fv(location,1,eye,0);
-
-        //default lookat vector
-        float lookat[] = {0f,0f,-1f};
-        location = gl2.glGetUniformLocationARB(program,"lookat");
-        gl2.glUniform3fv(location,1,lookat,0);
-
-        //default up vector
-        float up [] = {0f,1f,0f};
-        location = gl2.glGetUniformLocationARB(program,"up");
-        gl2.glUniform3fv(location,1,up,0);
-
+        gl2.glUniform3fv( posLoc, 1, eyeDefault, 0 );
+        gl2.glUniform3fv( lookLoc, 1, lookDefault, 0 );
+        gl2.glUniform3fv( upVecLoc, 1, upDefault, 0 );
     }
 
 
-    ///
-    // This function sets up the camera parameters controlling the viewing
-    // transformation.
-    //
-    // You will need to write this function, and maintain all of the values
-    // which must be sent to the vertex shader.
-    //
-    // @param program - The ID of an OpenGL (GLSL) shader program to which
-    //    parameter values are to be sent
-    // @param gl2 - GL2 object on which all OpenGL calls are to be made
-    // @param eyeX - x coordinate of the camera location
-    // @param eyeY - y coordinate of the camera location
-    // @param eyeZ - z coordinate of the camera location
-    // @param lookatX - x coordinate of the lookat point
-    // @param lookatY - y coordinate of the lookat point
-    // @param lookatZ - z coordinate of the lookat point
-    // @param upX - x coordinate of the up vector
-    // @param upY - y coordinate of the up vector
-    // @param upZ - z coordinate of the up vector
-    ///
+    /**
+     * This function sets up the camera parameters controlling the viewing
+     * transformation.
+     *
+     * You will need to write this function, and maintain all of the values
+     * which must be sent to the vertex shader.
+     *
+     * @param program - The ID of an OpenGL (GLSL) shader program to which
+     *    parameter values are to be sent
+     * @param gl2 - GL2 object on which all OpenGL calls are to be made
+     * @param eyepointX - x coordinate of the camera location
+     * @param eyepointY - y coordinate of the camera location
+     * @param eyepointZ - z coordinate of the camera location
+     * @param lookatX - x coordinate of the lookat point
+     * @param lookatY - y coordinate of the lookat point
+     * @param lookatZ - z coordinate of the lookat point
+     * @param upX - x coordinate of the up vector
+     * @param upY - y coordinate of the up vector
+     * @param upZ - z coordinate of the up vector
+     */
     void setUpCamera( int program, GL2 gl2,
-        float eyeX, float eyeY, float eyeZ,
-        float lookatX, float lookatY, float lookatZ,
-        float upX, float upY, float upZ )
+                      float eyepointX, float eyepointY, float eyepointZ,
+                      float lookatX, float lookatY, float lookatZ,
+                      float upX, float upY, float upZ )
     {
-        // Add your code here.
+        float eyeVec[] = { eyepointX, eyepointY, eyepointZ };
+        float lookatVec[] = { lookatX, lookatY, lookatZ };
+        float upVec[] = { upX, upY, upZ };
 
-        // set eye vector
-        float eye[] = {eyeX,eyeY,eyeZ};
-        int location = gl2.glGetUniformLocationARB(program,"eye");
-        gl2.glUniform3fv(location,1,eye,0);
+        int posLoc = gl2.glGetUniformLocation( program, "cPosition" );
+        int lookLoc = gl2.glGetUniformLocation( program, "cLookAt" );
+        int upVecLoc = gl2.glGetUniformLocation( program, "cUp" );
 
-
-        //set lookat vector
-        float lookat[] = {lookatX,lookatY,lookatZ};
-        location = gl2.glGetUniformLocationARB(program,"lookat");
-        gl2.glUniform3fv(location,1,lookat,0);
-
-        //set up vector
-        float up [] = {upX,upY,upZ};
-        location = gl2.glGetUniformLocationARB(program,"up");
-        gl2.glUniform3fv(location,1,up,0);
+        // send down to the shader
+        gl2.glUniform3fv( posLoc, 1, eyeVec, 0 );
+        gl2.glUniform3fv( lookLoc, 1, lookatVec, 0 );
+        gl2.glUniform3fv( upVecLoc, 1, upVec, 0 );
     }
 
 }
+

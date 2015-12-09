@@ -15,7 +15,10 @@ import javax.media.opengl.awt.GLCanvas;
 
 public class finalMain implements GLEventListener, KeyListener
 {
-
+    enum shapes{
+        CUBE,
+        CYLINDER
+    };
 
     ///
     // program and variable IDs
@@ -25,8 +28,7 @@ public class finalMain implements GLEventListener, KeyListener
     ///
     // view params
     ///
-    viewParams vp;
-    int viewMode;
+    viewParams myView;
 
     ///
     // image selection and camera/transformation control
@@ -39,13 +41,11 @@ public class finalMain implements GLEventListener, KeyListener
     // animation control
     ///
     private boolean animating = false;
-    private int level = 0;
     Animator anime;
 
     ///
     // rotation angles
     ///
-    public int theta;
     public float angles[];
     private float angleInc = 5.0f;
 
@@ -56,20 +56,20 @@ public class finalMain implements GLEventListener, KeyListener
     GLCanvas myCanvas;
     private static Frame frame;
 
-    BlenderObj obj;
+    // objects for reading in the obj files.
+    BlenderObj modifiedCube;
+    BlenderObj modifiedCylinder;
     ///
     // constructor
     ///
     public finalMain(GLCanvas G)
     {
 
-        angles = new float[3];
-        angles[0] = 30.0f;
-        angles[1] = 30.0f;
-        angles[2] = 0.0f;
+        angles = new float[2];
+        angles[0] = .0f;
+        angles[1] = .0f;
 
-        vp = new viewParams();
-        viewMode = 1;
+        myView = new viewParams();
 
         counter = 0;
         cameraAdjust = false;
@@ -80,7 +80,8 @@ public class finalMain implements GLEventListener, KeyListener
         G.addGLEventListener(this);
         G.addKeyListener(this);
 
-        obj = new BlenderObj("modified_cylinder.obj");
+        modifiedCube = new BlenderObj("modified_cube.obj");
+        modifiedCylinder = new BlenderObj("modified_cylinder.obj");
     }
 
     private void errorCheck( GL2 gl2 )
@@ -102,61 +103,54 @@ public class finalMain implements GLEventListener, KeyListener
         // get GL
         GL2 gl2 = (drawable.getGL()).getGL2();
 
+        // clear your frame buffers
+        gl2.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+        // set up viewing and projection parameters
+        myView.setUpFrustum( program, gl2 );
+
+        // set up the camera
+        myView.setUpCamera( program, gl2,
+                0.2f, 3.0f, 6.5f,
+                0.0f, 1.0f, 0.0f,
+                0.0f, 1.0f, 0.0f
+        );
+
+        // set up transformations for the modified cube
+        myView.setUpTransforms(program, gl2,
+                1.7f, 1.7f, 1.7f,
+                angles[shapes.CUBE.ordinal()],
+                angles[shapes.CUBE.ordinal()] - 40,
+                angles[shapes.CUBE.ordinal()]-5,
+                -.8f, 1.0f, .0f
+        );
+        // draw the modified cube
+        modifiedCube.drawModel(gl2, program);
+
+        // set up transformations for the modified cylinder
+        myView.setUpTransforms(program, gl2,
+                1.5f, 1.5f, 1.5f,
+                angles[shapes.CYLINDER.ordinal()],
+                angles[shapes.CYLINDER.ordinal()]-40,
+                angles[shapes.CYLINDER.ordinal()],
+                1.0f, -1.2f, -1.5f
+        );
+        // draw the modified cylinder
+        modifiedCylinder.drawModel(gl2,program);
+
         if( animating ) {
             animate();
         }
 
-        // pass in our rotations as a uniform variable
-        theta = gl2.glGetUniformLocation (program, "theta");
-        gl2.glUniform3fv (theta, 1, angles, 0);
 
-        // clear your frame buffers
-        gl2.glClear( GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT );
-        obj.drawModel(gl2,program);
 
     }
-    ///
-    // Rotates the shapes along x,y,z.
-    //
-    // Causes gimbal lock which also happened on Apollo 11
-    // http://en.wikipedia.org/wiki/Gimbal_lock#Gimbal_lock_on_Apollo_11
-    // Solution? Use Quaternions (Taught in Comp. Animation: Algorithms)
-    //
-    // TIDBIT:
-    // Quaternion plaque on Brougham (Broom) Bridge, Dublin, which says:
-    //
-    //  "Here as he walked by
-    //  on the 16th of October 1843
-    //
-    //  Sir William Rowan Hamilton
-    //
-    //  in a flash of genius discovered
-    //  the fundamental formula for
-    //  quaternion multiplication
-    //  i^2 = j^2 = k^2 = ijk = -1
-    //  & cut it on a stone of this bridge"
-    ///
+    /**
+     * Simple animate function
+     */
     public void animate() {
-
-        if( level >= 450 ) {
-            level = 0;
-            animating = false;
-        }
-
-        if( !animating ) {
-            anime.stop();
-            return;
-        }
-
-        if( level < 150 ) {
-            angles[0] += angleInc / 3;
-        } else if( level < 300 ) {
-            angles[1] += angleInc / 3;
-        } else {
-            angles[2] += angleInc / 3;
-        }
-        // myCanvas.display();
-        updateNeeded = true;
+        angles[shapes.CUBE.ordinal()]  += 1;
+        angles[shapes.CYLINDER.ordinal()] += 1;
     }
 
     ///
@@ -231,7 +225,7 @@ public class finalMain implements GLEventListener, KeyListener
 
             // automated animation
             case 'a': animating = !animating; anime.start(); break;
-            case 's': animating = false; break;
+            case 's': anime.stop(); break;
 
             // incremental rotation along the axes
             case 'x': angles[0] -= angleInc; break;
