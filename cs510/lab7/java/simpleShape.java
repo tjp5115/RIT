@@ -9,7 +9,11 @@
  *
  */
 
+import java.awt.*;
 import java.nio.*;
+import java.awt.event.*;
+import javax.media.opengl.*;
+import javax.media.opengl.awt.GLCanvas;
 import java.util.*;
 
 public class simpleShape
@@ -115,10 +119,7 @@ public class simpleShape
         normals = new Vector<Float>();
         nVerts = 0;
     }
-
-    /**
-     * @return normals for the shape
-     */
+    
     public Buffer getNormals ()
     {
         float v[] = new float[normals.size()];
@@ -127,11 +128,7 @@ public class simpleShape
         }
         return FloatBuffer.wrap (v);
     }
-
-    /**
-     *
-     * @return vertices for the shape
-     */
+    
     public Buffer getVertices ()
     {
         float v[] = new float[points.size()];
@@ -140,11 +137,7 @@ public class simpleShape
         }
         return FloatBuffer.wrap (v);
     }
-
-    /**
-     *
-     * @return texture mapping cords for the shape
-     */
+    
     public Buffer getUV ()
     {
         float v[] = new float[uv.size()];
@@ -153,10 +146,7 @@ public class simpleShape
         }
         return FloatBuffer.wrap (v);
     }
-
-    /**
-     * @return element buffer for the shape
-     */
+    
     public Buffer getElements ()
     {
         short e[] = new short[elements.size()];
@@ -166,13 +156,11 @@ public class simpleShape
 
         return ShortBuffer.wrap (e);
     }
-
-    /**
-     * @return number of vertices in the shape
-     */
+    
     public short getNVerts()
     {
         return nVerts;
     }
+	
+	
 }
-

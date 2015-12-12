@@ -9,9 +9,7 @@
 //
 
 import javax.media.opengl.*;
-import javax.media.opengl.fixedfunc.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class lightingParams
 {

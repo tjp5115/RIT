@@ -1,0 +1,25 @@
+I emailed the professor about the image having only two objects. His response is below. This is only to show that
+I did not just add a random object into the scene.
+
+The email i received is below:
+
+
+Me:
+Can we use Blender to create our polygon meshes and load the OBJ file into
+opengl, or do you want us to use a separate program with the vertices hard
+coded like we have been doing?
+
+Professor Carithers:
+Either way is fine.  There's a nice tutorial on doing OBJ loading at
+<http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/>.
+
+Me:
+Also, I like this image <http://i.stack.imgur.com/X5moL.jpg>, but it only
+has two objects. Can i add another one to it, or should i pick another
+Image.
+
+Professor Carithers:
+That's a really interesting image - simple, but not trivial to render.
+I'd accept it as-is, but you could easily add a second instance of the
+righthand object, maybe translated a bit and rotated a bit (perhaps 45
+to 90 degrees more) to show the beveling from a different angle.

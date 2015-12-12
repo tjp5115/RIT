@@ -1,19 +1,22 @@
-//
-//  shaderSetup.java
-//
-//  Simple class for wrapping of shader reading, compiling, and linking.
-//
-//  Based on the C++ shaderSetup.cpp implementation, with modifications
-//  mandated by the use of JOGL.
-//
+/**
+ * shaderSetup.java
+ *
+ * Simple class for wrapping of shader reading, compilimng, and linking.
+ *
+ * Based on the C++ shaderSetup.cpp implementation, with modifications
+ * mandated by the use of JOGL.
+ */
 
+import java.awt.*;
+import java.awt.event.*;
 import javax.media.opengl.*;
+import javax.media.opengl.awt.GLCanvas;
 import java.io.*;
 
 
 public class shaderSetup
 {
-
+    
     /**
      * Error codes indicating results from shaderSetup calls
      */
@@ -79,43 +82,41 @@ public class shaderSetup
         reader.close();
         return fileData.toString();
     }
-
+    
     public void printShaderInfoLog(GL2 gl2, int obj)
     {
         int infologLength[] = new int[1];
         int charsWritten[] = new int[1];
-
+        
+        
         gl2.glGetShaderiv(obj, GL2.GL_INFO_LOG_LENGTH, infologLength, 0);
-
+        
         if (infologLength[0] > 0)
         {
             byte infoLog[] = new byte[infologLength[0]];
             gl2.glGetShaderInfoLog(obj, infologLength[0], charsWritten, 0, infoLog, 0);
-            if( infoLog[0] != 0 ) {
-                System.err.println (new String(infoLog));
-            }
+            System.err.println (new String(infoLog));
         }
     }
 
-
+    
     public void printProgramInfoLog(GL2 gl2, int obj)
     {
         int infologLength[] = new int[1];
         int charsWritten[] = new int[1];
+        
 
-        gl2.glGetProgramiv(obj, GL2.GL_INFO_LOG_LENGTH, infologLength, 0);
-
+        gl2.glGetShaderiv(obj, GL2.GL_INFO_LOG_LENGTH, infologLength, 0);
+        
         if (infologLength[0] > 0)
         {
             byte infoLog[] = new byte[infologLength[0]];
             gl2.glGetProgramInfoLog(obj, infologLength[0], charsWritten, 0, infoLog, 0);
-            if( infoLog[0] != 0 ) {
-                System.err.println (new String(infoLog));
-            }
+            System.err.println (new String(infoLog));
         }
     }
-
-
+    
+    
     /**
      * readAndCompileShaders
      */
@@ -126,11 +127,11 @@ public class shaderSetup
 
         // assume that everything will work
         shaderErrorCode = ErrorCode.E_NO_ERROR;
-
+        
         // create the shader
         int the_vert = gl2.glCreateShader (GL2ES2.GL_VERTEX_SHADER);
         int the_frag = gl2.glCreateShader (GL2ES2.GL_FRAGMENT_SHADER);
-
+        
         // read in shader source
         try {
             vs = textFileRead (vert);
@@ -148,8 +149,8 @@ public class shaderSetup
             System.err.println (errorString(shaderErrorCode) + vert);
             return 0;
         }
-
-
+        
+        
         // fill in the shader source
         String source[] = new String[1];
         int len[] = new int[1];
@@ -159,10 +160,10 @@ public class shaderSetup
         source[0] = fs;
         len[0] = fs.length();
         gl2.glShaderSource (the_frag, 1, source, len, 0);
-
+        
         // Compile the shader
         int compileStatus[] = new int[1];
-
+        
         gl2.glCompileShader (the_vert);
         printShaderInfoLog (gl2, the_vert);
         gl2.glGetShaderiv (the_vert, GL2.GL_COMPILE_STATUS, compileStatus, 0);
@@ -178,13 +179,13 @@ public class shaderSetup
             shaderErrorCode = ErrorCode.E_FS_COMPILE;
             return 0;
         }
-
+        
         // Create the program and attach your shader
         int the_program = gl2.glCreateProgram();
         gl2.glAttachShader(the_program, the_vert);
         gl2.glAttachShader(the_program, the_frag);
         printProgramInfoLog(gl2, the_program);
-
+        
         // Link the program
         gl2.glLinkProgram(the_program);
         printProgramInfoLog(gl2, the_program);
@@ -193,7 +194,7 @@ public class shaderSetup
             shaderErrorCode = ErrorCode.E_SHADER_LINK;
             return 0;
         }
-
-        return the_program;
+        
+    	return the_program;
     }
 }

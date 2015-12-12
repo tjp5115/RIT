@@ -1,22 +1,23 @@
+/**
+ * Loads an object file.
+ * The class will only load the object file's texture cordinated, normals, vertices, and face attributes.
+ * The class will only process triangular faces.
+ * Author: Tyler Paulsen
+ *
+ */
 import com.jogamp.common.nio.Buffers;
 import com.sun.prism.impl.BufferUtil;
-
 import java.io.FileReader;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
-/**
- * Created by Tyler Paulsen on 12/6/2015.
- */
 public class BlenderObj {
     // index for indicies
     // file for obj
@@ -25,34 +26,39 @@ public class BlenderObj {
     private ArrayList<float[]> verts = new ArrayList(); //list of verts
     private ArrayList<float[]> tex = new ArrayList(); // texture cord
     private ArrayList<float[]> normals = new ArrayList(); // list of normals
+    // buffer ids
     private int[] vbuffer;
     private int[] ebuffer;
-
-    private ArrayList<Short> elements = new ArrayList<>();
-
+    // buffers
     FloatBuffer texBuff;
     FloatBuffer normBuff;
     FloatBuffer vertBuff;
-
     // indicies for the obj
     private ArrayList<int[]>  vertIndices = new ArrayList();
     private ArrayList<int[]>  texIndices = new ArrayList();
     private ArrayList<int[]>  normalIndices = new ArrayList();
+    // number of triangles
     private int triangleCount;
     // init properties to bind to gl2.
     boolean firstDraw;
     boolean textured;
-    boolean bufferInit;
-    short nverts = 0;
-    // constructor. 1) process file     2) create model data buffer
+
+    /**
+     * constructor.
+     * Reads obj file, and sets up arrays
+     * @param path - obj file
+     */
     BlenderObj(String path){
         this.path = path;
-
         load();
         firstDraw = true;
         vbuffer = new int[1];
         ebuffer = new int[1];
     }
+
+    /**
+     * load the file, and put values from file into arrays
+     */
     private void load(){
         String line;
         try {
@@ -72,7 +78,6 @@ public class BlenderObj {
                         break;
                     case "v":
                         verts.add(processFloat(values));
-                        nverts++;
                         break;
                     case "f":
                         triangleCount++;
@@ -92,6 +97,11 @@ public class BlenderObj {
 
     }
 
+    /**
+     * processes texture, normals, and vertices
+     * @param values - one line from the obj file to process
+     * @return - array of the floats on the line
+     */
     private float[] processFloat(String[] values){
         float []data = new float[values.length-1];
         for (int i = 1; i < values.length; ++i){
@@ -99,6 +109,12 @@ public class BlenderObj {
         }
         return data;
     }
+
+    /**
+     * process the face indicies. Used to create faces from the list of vertices.
+     * Used to create the buffers
+     * @param values - one line from the obj file to process
+     */
     private void processIndicies(String[] values){
         int[]vertI= new int[3];
         int[]normalI= new int[3];
@@ -145,9 +161,9 @@ public class BlenderObj {
                 if(textured) texBuff.put(tex.get(t[k]-1));
                 normBuff.put(normals.get(n[k]-1));
                 vertBuff.put(verts.get(v[k]-1));
-               // System.out.println(Arrays.toString(verts.get(v[k]-1)));
             }
         }
+        //reset the buffers
         texBuff.flip();
         normBuff.flip();
         vertBuff.flip();
@@ -163,6 +179,9 @@ public class BlenderObj {
     }
 
 
+    /**
+     * cleanup all data. We will no longer need it.
+     */
     public void cleanup(){
         normBuff.clear();
         texBuff.clear();
@@ -174,7 +193,14 @@ public class BlenderObj {
         texIndices.clear();
         vertIndices.clear();
     }
+
+    /**
+     * draws the obj file model
+     * @param gl2
+     * @param program - shader program to use
+     */
     public void drawModel(GL2 gl2, int program){
+        // if this is the first draw, set up the buffer data to be sent to the GPU
         if(firstDraw){
             createBufferData(gl2);
             cleanup();
@@ -196,6 +222,7 @@ public class BlenderObj {
         gl2.glEnableVertexAttribArray(vNormal);
         gl2.glVertexAttribPointer(vNormal, 3, GL.GL_FLOAT, false, 0, offset);
 
+        // draw the object.
         gl2.glDrawArrays(GL.GL_TRIANGLES, 0, triangleCount * 3);
     }
 }
